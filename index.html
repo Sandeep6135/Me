@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sandeep's Creative Portfolio</title>
+  <meta name="description" content="A hell-creative, fully animated portfolio">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+  <!-- ========== CUSTOM CURSOR ========== -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ========== LOADER ========== -->
+  <div class="loader" id="loader">
+    <div class="loader-inner">
+      <div class="loader-blocks">
+        <div class="loader-block" style="--i:0"></div>
+        <div class="loader-block" style="--i:1"></div>
+        <div class="loader-block" style="--i:2"></div>
+        <div class="loader-block" style="--i:3"></div>
+        <div class="loader-block" style="--i:4"></div>
+      </div>
+      <div class="loader-text">
+        <span class="loader-letter" style="--d:0">E</span>
+        <span class="loader-letter" style="--d:1">R</span>
+        <span class="loader-letter" style="--d:2">R</span>
+        <span class="loader-letter" style="--d:3">O</span>
+        <span class="loader-letter" style="--d:4">R</span>
+        <span class="loader-letter" style="--d:5"> </span>
+        <span class="loader-letter" style="--d:6">4</span>
+        <span class="loader-letter" style="--d:7">0</span>
+        <span class="loader-letter" style="--d:8">4</span>
+      </div>
+      <div class="loader-progress">
+        <div class="loader-progress-bar" id="loaderBar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== NAVIGATION ========== -->
+  <nav class="nav" id="nav">
+    <div class="nav-logo">
+      <a href="#hero" class="magnetic-btn">
+        <span class="nav-logo-text">Sandeep</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <a href="#hero" class="nav-link magnetic-btn active" data-section="hero">
+        <span>Home</span>
+      </a>
+      <a href="#about" class="nav-link magnetic-btn" data-section="about">
+        <span>About</span>
+      </a>
+      <a href="#skills" class="nav-link magnetic-btn" data-section="skills">
+        <span>Skills</span>
+      </a>
+      <a href="#projects" class="nav-link magnetic-btn" data-section="projects">
+        <span>Work</span>
+      </a>
+      <a href="#experience" class="nav-link magnetic-btn" data-section="experience">
+        <span>Experience</span>
+      </a>
+      <a href="#contact" class="nav-link magnetic-btn" data-section="contact">
+        <span>Contact</span>
+      </a>
+    </div>
+    <div class="nav-cta">
+      <a href="#contact" class="btn-glow magnetic-btn">
+        <span>Let's Talk</span>
+        <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- ========== MOBILE MENU ========== -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-bg"></div>
+    <div class="mobile-menu-content">
+      <a href="#hero" class="mobile-link" style="--i:0">Home</a>
+      <a href="#about" class="mobile-link" style="--i:1">About</a>
+      <a href="#skills" class="mobile-link" style="--i:2">Skills</a>
+      <a href="#projects" class="mobile-link" style="--i:3">Work</a>
+      <a href="#experience" class="mobile-link" style="--i:4">Experience</a>
+      <a href="#contact" class="mobile-link" style="--i:5">Contact</a>
+    </div>
+  </div>
+
+  <!-- ========== HERO SECTION ========== -->
+  <section class="hero" id="hero">
+    <canvas class="hero-canvas" id="heroCanvas"></canvas>
+
+    <!-- Floating gradient orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="hero-content">
+      <div class="hero-tag">
+        <span class="hero-tag-dot"></span>
+        <span class="hero-tag-text">Available for Work</span>
+      </div>
+      <h1 class="hero-title">
+        <span class="hero-line">
+          <span class="hero-word" data-animation="reveal">Hello, I'm</span>
+        </span>
+        <span class="hero-line">
+          <span class="hero-word hero-name" data-animation="reveal">Sandeep</span>
+        </span>
+        <span class="hero-line">
+          <span class="hero-word" data-animation="reveal">I Create</span>
+          <span class="hero-word hero-rotating-text" data-animation="reveal">
+            <span class="rotating-words">
+              <span class="rotating-word active">Experiences</span>
+              <span class="rotating-word">Interfaces</span>
+              <span class="rotating-word">Solutions</span>
+              <span class="rotating-word">Magic</span>
+            </span>
+          </span>
+        </span>
+      </h1>
+      <p class="hero-subtitle" data-animation="fade-up">
+        A creative developer & designer crafting digital experiences that push boundaries
+      </p>
+      <div class="hero-actions" data-animation="fade-up">
+        <a href="#projects" class="btn-primary magnetic-btn">
+          <span>View My Work</span>
+          <div class="btn-shimmer"></div>
+        </a>
+        <a href="#contact" class="btn-outline magnetic-btn">
+          <span>Get in Touch</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Floating shapes -->
+    <div class="floating-shapes">
+      <div class="shape shape-1">
+        <svg viewBox="0 0 200 200"><path d="M100,10 L190,60 L190,140 L100,190 L10,140 L10,60 Z" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+      </div>
+      <div class="shape shape-2">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+      </div>
+      <div class="shape shape-3">
+        <svg viewBox="0 0 100 100"><polygon points="50,5 95,97.5 5,97.5" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+      </div>
+      <div class="shape shape-4">✦</div>
+      <div class="shape shape-5">◈</div>
+    </div>
+  </section>
+
+  <!-- ========== MARQUEE STRIP ========== -->
+  <div class="marquee-strip">
+    <div class="marquee-track">
+      <div class="marquee-content">
+        <span>CREATIVE DEVELOPER</span>
+        <span class="marquee-star">✦</span>
+        <span>UI/UX DESIGNER</span>
+        <span class="marquee-star">✦</span>
+        <span>PROBLEM SOLVER</span>
+        <span class="marquee-star">✦</span>
+        <span>DIGITAL CRAFTSMAN</span>
+        <span class="marquee-star">✦</span>
+        <span>CREATIVE DEVELOPER</span>
+        <span class="marquee-star">✦</span>
+        <span>UI/UX DESIGNER</span>
+        <span class="marquee-star">✦</span>
+        <span>PROBLEM SOLVER</span>
+        <span class="marquee-star">✦</span>
+        <span>DIGITAL CRAFTSMAN</span>
+        <span class="marquee-star">✦</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ABOUT SECTION ========== -->
+  <section class="section about" id="about">
+    <div class="container">
+      <div class="section-header" data-animation="reveal">
+        <span class="section-number">01</span>
+        <h2 class="section-title">
+          <span class="title-line"><span>About</span></span>
+          <span class="title-line"><span>Me<span class="accent">.</span></span></span>
+        </h2>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-image-wrapper" data-animation="fade-up">
+          <div class="about-image">
+            <div class="about-slideshow" id="aboutSlideshow">
+              <!-- Transition overlay layers -->
+              <div class="slide-fx-overlay" id="slideFxOverlay">
+                <div class="fx-slice" style="--i:0"></div>
+                <div class="fx-slice" style="--i:1"></div>
+                <div class="fx-slice" style="--i:2"></div>
+                <div class="fx-slice" style="--i:3"></div>
+                <div class="fx-slice" style="--i:4"></div>
+                <div class="fx-slice" style="--i:5"></div>
+                <div class="fx-slice" style="--i:6"></div>
+                <div class="fx-slice" style="--i:7"></div>
+              </div>
+              <!-- Glitch layers -->
+              <div class="slide-glitch-layer" id="glitchLayer1"></div>
+              <div class="slide-glitch-layer" id="glitchLayer2"></div>
+              <!-- Images -->
+              <img src="assets/img/Sandeep.png" alt="Sandeep" class="slide-img active">
+              <img src="assets/img/DP.png" alt="Sandeep" class="slide-img">
+              <img src="assets/img/Sandeep.jpg" alt="Sandeep" class="slide-img">
+              <img src="assets/img/Breached.png" alt="Sandeep" class="slide-img">
+              <img src="assets/img/Sandeep.jpeg" alt="Sandeep" class="slide-img">
+              <!-- Transition name label -->
+              <div class="slide-fx-label" id="slideFxLabel"></div>
+              <!-- Slide indicators -->
+              <div class="slide-indicators">
+                <span class="slide-dot active" data-slide="0"></span>
+                <span class="slide-dot" data-slide="1"></span>
+                <span class="slide-dot" data-slide="2"></span>
+                <span class="slide-dot" data-slide="3"></span>
+                <span class="slide-dot" data-slide="4"></span>
+              </div>
+              <!-- Progress bar -->
+              <div class="slide-progress">
+                <div class="slide-progress-bar" id="slideProgressBar"></div>
+              </div>
+            </div>
+            <div class="about-image-border"></div>
+            <div class="about-image-glow"></div>
+          </div>
+          <div class="about-badge">
+            <span class="about-badge-number">5+</span>
+            <span class="about-badge-text">Years<br>Experience</span>
+          </div>
+        </div>
+
+        <div class="about-content">
+          <div class="about-text" data-animation="fade-up">
+            <p class="about-intro">
+              I'm a passionate <span class="highlight">creative developer</span> who transforms ideas into 
+              stunning digital experiences. With a keen eye for design and strong technical skills, 
+              I bridge the gap between aesthetics and functionality.
+            </p>
+            <p>
+              My approach combines creative thinking with solid engineering practices to deliver 
+              solutions that not only look amazing but perform flawlessly. I believe in the power 
+              of thoughtful design and clean code.
+            </p>
+          </div>
+
+          <div class="about-stats" data-animation="fade-up">
+            <div class="stat-card">
+              <div class="stat-number" data-count="50">0</div>
+              <div class="stat-label">Projects<br>Completed</div>
+              <div class="stat-icon"><i class="bi bi-rocket-takeoff"></i></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" data-count="30">0</div>
+              <div class="stat-label">Happy<br>Clients</div>
+              <div class="stat-icon"><i class="bi bi-emoji-smile"></i></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" data-count="5">0</div>
+              <div class="stat-label">Years<br>Experience</div>
+              <div class="stat-icon"><i class="bi bi-calendar-star"></i></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" data-count="10">0</div>
+              <div class="stat-label">Awards<br>Won</div>
+              <div class="stat-icon"><i class="bi bi-trophy"></i></div>
+            </div>
+          </div>
+
+          <div class="about-cta" data-animation="fade-up">
+            <a href="#" class="btn-primary magnetic-btn" download>
+              <span>Download CV</span>
+              <i class="bi bi-download"></i>
+              <div class="btn-shimmer"></div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decorative elements -->
+    <div class="section-decoration">
+      <div class="deco-line deco-line-1"></div>
+      <div class="deco-line deco-line-2"></div>
+    </div>
+  </section>
+
+  <!-- ========== SKILLS SECTION ========== -->
+  <section class="section skills" id="skills">
+    <div class="container">
+      <div class="section-header" data-animation="reveal">
+        <span class="section-number">02</span>
+        <h2 class="section-title">
+          <span class="title-line"><span>My</span></span>
+          <span class="title-line"><span>Skills<span class="accent">.</span></span></span>
+        </h2>
+      </div>
+
+      <div class="skills-grid">
+        <!-- Skill Category 1 -->
+        <div class="skill-category" data-animation="fade-up">
+          <div class="skill-category-header">
+            <div class="skill-icon-wrapper">
+              <i class="bi bi-code-slash"></i>
+            </div>
+            <h3>Frontend</h3>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag" style="--hue: 200">HTML5</span>
+            <span class="skill-tag" style="--hue: 220">CSS3</span>
+            <span class="skill-tag" style="--hue: 50">JavaScript</span>
+            <span class="skill-tag" style="--hue: 190">React</span>
+            <span class="skill-tag" style="--hue: 150">Vue.js</span>
+            <span class="skill-tag" style="--hue: 260">Bootstrap</span>
+            <span class="skill-tag" style="--hue: 170">Tailwind</span>
+            <span class="skill-tag" style="--hue: 210">TypeScript</span>
+          </div>
+        </div>
+
+        <!-- Skill Category 2 -->
+        <div class="skill-category" data-animation="fade-up">
+          <div class="skill-category-header">
+            <div class="skill-icon-wrapper">
+              <i class="bi bi-server"></i>
+            </div>
+            <h3>Backend</h3>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag" style="--hue: 120">Node.js</span>
+            <span class="skill-tag" style="--hue: 270">Python</span>
+            <span class="skill-tag" style="--hue: 340">PHP</span>
+            <span class="skill-tag" style="--hue: 30">Firebase</span>
+            <span class="skill-tag" style="--hue: 140">MongoDB</span>
+            <span class="skill-tag" style="--hue: 200">PostgreSQL</span>
+            <span class="skill-tag" style="--hue: 0">REST APIs</span>
+            <span class="skill-tag" style="--hue: 300">GraphQL</span>
+          </div>
+        </div>
+
+        <!-- Skill Category 3 -->
+        <div class="skill-category" data-animation="fade-up">
+          <div class="skill-category-header">
+            <div class="skill-icon-wrapper">
+              <i class="bi bi-palette"></i>
+            </div>
+            <h3>Design</h3>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag" style="--hue: 280">Figma</span>
+            <span class="skill-tag" style="--hue: 200">Photoshop</span>
+            <span class="skill-tag" style="--hue: 330">Illustrator</span>
+            <span class="skill-tag" style="--hue: 15">After Effects</span>
+            <span class="skill-tag" style="--hue: 160">Blender</span>
+            <span class="skill-tag" style="--hue: 45">UI/UX</span>
+          </div>
+        </div>
+
+        <!-- Skill Category 4 -->
+        <div class="skill-category" data-animation="fade-up">
+          <div class="skill-category-header">
+            <div class="skill-icon-wrapper">
+              <i class="bi bi-tools"></i>
+            </div>
+            <h3>Tools</h3>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag" style="--hue: 0">Git</span>
+            <span class="skill-tag" style="--hue: 210">Docker</span>
+            <span class="skill-tag" style="--hue: 30">AWS</span>
+            <span class="skill-tag" style="--hue: 180">VS Code</span>
+            <span class="skill-tag" style="--hue: 90">Linux</span>
+            <span class="skill-tag" style="--hue: 310">Jira</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Animated skill bars -->
+      <div class="skill-bars" data-animation="fade-up">
+        <div class="skill-bar-item">
+          <div class="skill-bar-info">
+            <span>Creative Development</span>
+            <span class="skill-percent">95%</span>
+          </div>
+          <div class="skill-bar-track">
+            <div class="skill-bar-fill" data-width="95" style="--bar-color: var(--accent-1)"></div>
+          </div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-info">
+            <span>UI/UX Design</span>
+            <span class="skill-percent">90%</span>
+          </div>
+          <div class="skill-bar-track">
+            <div class="skill-bar-fill" data-width="90" style="--bar-color: var(--accent-2)"></div>
+          </div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-info">
+            <span>Backend Architecture</span>
+            <span class="skill-percent">85%</span>
+          </div>
+          <div class="skill-bar-track">
+            <div class="skill-bar-fill" data-width="85" style="--bar-color: var(--accent-3)"></div>
+          </div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-info">
+            <span>Motion Design</span>
+            <span class="skill-percent">88%</span>
+          </div>
+          <div class="skill-bar-track">
+            <div class="skill-bar-fill" data-width="88" style="--bar-color: var(--accent-4)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PROJECTS SECTION ========== -->
+  <section class="section projects" id="projects">
+    <div class="container">
+      <div class="section-header" data-animation="reveal">
+        <span class="section-number">03</span>
+        <h2 class="section-title">
+          <span class="title-line"><span>Featured</span></span>
+          <span class="title-line"><span>Work<span class="accent">.</span></span></span>
+        </h2>
+      </div>
+
+      <div class="projects-filter" data-animation="fade-up">
+        <button class="filter-btn active" data-filter="all">
+          <span>All</span>
+        </button>
+        <button class="filter-btn" data-filter="web">
+          <span>Web</span>
+        </button>
+        <button class="filter-btn" data-filter="app">
+          <span>App</span>
+        </button>
+        <button class="filter-btn" data-filter="design">
+          <span>Design</span>
+        </button>
+      </div>
+
+      <div class="projects-grid">
+        <!-- Project 1 -->
+        <div class="project-card" data-category="web" data-animation="fade-up">
+          <div class="project-image">
+            <div class="project-placeholder" style="--gradient: linear-gradient(135deg, #667eea, #764ba2)">
+              <i class="bi bi-globe2"></i>
+            </div>
+            <div class="project-overlay">
+              <div class="project-overlay-content">
+                <a href="#" class="project-link magnetic-btn"><i class="bi bi-arrow-up-right"></i></a>
+                <a href="#" class="project-link magnetic-btn"><i class="bi bi-github"></i></a>
+              </div>
+            </div>
+          </div>
+          <div class="project-info">
+            <span class="project-category">Web Development</span>
+            <h3 class="project-title">Project One</h3>
+            <p class="project-desc">A stunning web application with modern design.</p>
+            <div class="project-tech">
+              <span>React</span>
+              <span>Node.js</span>
+              <span>MongoDB</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="project-card" data-category="app" data-animation="fade-up">
+          <div class="project-image">
+            <div class="project-placeholder" style="--gradient: linear-gradient(135deg, #f093fb, #f5576c)">
+              <i class="bi bi-phone"></i>
+            </div>
+            <div class="project-overlay">
+              <div class="project-overlay-content">
+                <a href="#" class="project-link magnetic-btn"><i class="bi bi-arrow-up-right"></i></a>
+                <a href="#" class="project-link magnetic-btn"><i class="bi bi-github"></i></a>
+              </div>
+            </div>
+          </div>
+          <div class="project-info">
+            <span class="project-category">Mobile App</span>
+            <h3 class="project-title">Project Two</h3>
+            <p class="project-desc">Cross-platform mobile application.</p>
+            <div class="project-tech">
+              <span>Flutter</span>
+              <span>Firebase</span>
+              <span>Dart</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="project-card" data-category="design" data-animation="fade-up">
+          <div class="project-image">
+            <div class="project-placeholder" style="--gradient: linear-gradient(135deg, #4facfe, #00f2fe)">
+              <i class="bi bi-palette"></i>
+            </div>
+            <div class="project-overlay">
+              <div class="project-overlay-content">
+                <a href="#" class="project-link magnetic-btn"><i class="bi bi-arrow-up-right"></i></a>
+                <a href="#" class="project-link magnetic-btn"><i class="bi bi-dribbble"></i></a>
+              </div>
+            </div>
+          </div>
+          <div class="project-info">
+            <span class="project-category">UI/UX Design</span>
+            <h3 class="project-title">Project Three</h3>
+            <p class="project-desc">Complete brand identity and UI design system.</p>
+            <div class="project-tech">
+              <span>Figma</span>
+              <span>Illustrator</span>
+              <span>Prototyping</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 4 -->
+        <div class="project-card" data-category="web" data-animation="fade-up">
+          <div class="project-image">
+            <div class="project-placeholder" style="--gradient: linear-gradient(135deg, #43e97b, #38f9d7)">
+              <i class="bi bi-laptop"></i>
+            </div>
+            <div class="project-overlay">
+              <div class="project-overlay-content">
+                <a href="#" class="project-link magnetic-btn"><i class="bi bi-arrow-up-right"></i></a>
+                <a href="#" class="project-link magnetic-btn"><i class="bi bi-github"></i></a>
+              </div>
+            </div>
+          </div>
+          <div class="project-info">
+            <span class="project-category">Web Development</span>
+            <h3 class="project-title">Project Four</h3>
+            <p class="project-desc">E-commerce platform with real-time features.</p>
+            <div class="project-tech">
+              <span>Next.js</span>
+              <span>Stripe</span>
+              <span>PostgreSQL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 5 -->
+        <div class="project-card" data-category="app" data-animation="fade-up">
+          <div class="project-image">
+            <div class="project-placeholder" style="--gradient: linear-gradient(135deg, #fa709a, #fee140)">
+              <i class="bi bi-smartwatch"></i>
+            </div>
+            <div class="project-overlay">
+              <div class="project-overlay-content">
+                <a href="#" class="project-link magnetic-btn"><i class="bi bi-arrow-up-right"></i></a>
+                <a href="#" class="project-link magnetic-btn"><i class="bi bi-github"></i></a>
+              </div>
+            </div>
+          </div>
+          <div class="project-info">
+            <span class="project-category">Mobile App</span>
+            <h3 class="project-title">Project Five</h3>
+            <p class="project-desc">Health & fitness tracking application.</p>
+            <div class="project-tech">
+              <span>React Native</span>
+              <span>GraphQL</span>
+              <span>AWS</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 6 -->
+        <div class="project-card" data-category="design" data-animation="fade-up">
+          <div class="project-image">
+            <div class="project-placeholder" style="--gradient: linear-gradient(135deg, #a18cd1, #fbc2eb)">
+              <i class="bi bi-brush"></i>
+            </div>
+            <div class="project-overlay">
+              <div class="project-overlay-content">
+                <a href="#" class="project-link magnetic-btn"><i class="bi bi-arrow-up-right"></i></a>
+                <a href="#" class="project-link magnetic-btn"><i class="bi bi-behance"></i></a>
+              </div>
+            </div>
+          </div>
+          <div class="project-info">
+            <span class="project-category">UI/UX Design</span>
+            <h3 class="project-title">Project Six</h3>
+            <p class="project-desc">Dashboard design with data visualization.</p>
+            <div class="project-tech">
+              <span>Figma</span>
+              <span>After Effects</span>
+              <span>Lottie</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== BIG TEXT MARQUEE ========== -->
+  <div class="big-text-section">
+    <div class="big-text-track" data-scroll-speed="-0.5">
+      <span class="big-text">LET'S CREATE SOMETHING</span>
+      <span class="big-text outline">EXTRAORDINARY</span>
+      <span class="big-text">TOGETHER</span>
+      <span class="big-text outline">✦</span>
+    </div>
+  </div>
+
+  <!-- ========== EXPERIENCE / TIMELINE ========== -->
+  <section class="section experience" id="experience">
+    <div class="container">
+      <div class="section-header" data-animation="reveal">
+        <span class="section-number">04</span>
+        <h2 class="section-title">
+          <span class="title-line"><span>My</span></span>
+          <span class="title-line"><span>Journey<span class="accent">.</span></span></span>
+        </h2>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-line">
+          <div class="timeline-line-progress"></div>
+        </div>
+
+        <div class="timeline-item" data-animation="fade-up">
+          <div class="timeline-dot">
+            <div class="timeline-dot-inner"></div>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-date">
+              <span>2024 — Present</span>
+            </div>
+            <h3>Senior Developer</h3>
+            <h4>Company Name</h4>
+            <p>Leading development of innovative web solutions and mentoring junior developers.</p>
+            <div class="timeline-tags">
+              <span>Leadership</span>
+              <span>Architecture</span>
+              <span>Mentoring</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item" data-animation="fade-up">
+          <div class="timeline-dot">
+            <div class="timeline-dot-inner"></div>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-date">
+              <span>2022 — 2024</span>
+            </div>
+            <h3>Full Stack Developer</h3>
+            <h4>Company Name</h4>
+            <p>Built and maintained multiple client-facing applications with modern tech stacks.</p>
+            <div class="timeline-tags">
+              <span>React</span>
+              <span>Node.js</span>
+              <span>AWS</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item" data-animation="fade-up">
+          <div class="timeline-dot">
+            <div class="timeline-dot-inner"></div>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-date">
+              <span>2020 — 2022</span>
+            </div>
+            <h3>Frontend Developer</h3>
+            <h4>Company Name</h4>
+            <p>Designed and developed responsive, performant user interfaces.</p>
+            <div class="timeline-tags">
+              <span>Vue.js</span>
+              <span>SCSS</span>
+              <span>Firebase</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item" data-animation="fade-up">
+          <div class="timeline-dot">
+            <div class="timeline-dot-inner"></div>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-date">
+              <span>2018 — 2020</span>
+            </div>
+            <h3>Bachelor's Degree</h3>
+            <h4>University Name</h4>
+            <p>Computer Science with focus on web technologies and design principles.</p>
+            <div class="timeline-tags">
+              <span>CS</span>
+              <span>Design</span>
+              <span>Research</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== TESTIMONIALS ========== -->
+  <section class="section testimonials">
+    <div class="container">
+      <div class="section-header" data-animation="reveal">
+        <span class="section-number">05</span>
+        <h2 class="section-title">
+          <span class="title-line"><span>Kind</span></span>
+          <span class="title-line"><span>Words<span class="accent">.</span></span></span>
+        </h2>
+      </div>
+
+      <div class="testimonial-cards" data-animation="fade-up">
+        <div class="testimonial-card">
+          <div class="testimonial-quote"><i class="bi bi-quote"></i></div>
+          <p>"An incredible developer who brought our vision to life with stunning creativity and technical excellence."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">
+              <i class="bi bi-person-circle"></i>
+            </div>
+            <div>
+              <strong>Client Name</strong>
+              <span>CEO, Company</span>
+            </div>
+          </div>
+          <div class="testimonial-glow"></div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-quote"><i class="bi bi-quote"></i></div>
+          <p>"The attention to detail and creative approach transformed our project beyond expectations."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">
+              <i class="bi bi-person-circle"></i>
+            </div>
+            <div>
+              <strong>Client Name</strong>
+              <span>CTO, Company</span>
+            </div>
+          </div>
+          <div class="testimonial-glow"></div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-quote"><i class="bi bi-quote"></i></div>
+          <p>"Outstanding work ethic and remarkable skill set. Delivered beyond what we imagined possible."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">
+              <i class="bi bi-person-circle"></i>
+            </div>
+            <div>
+              <strong>Client Name</strong>
+              <span>Director, Company</span>
+            </div>
+          </div>
+          <div class="testimonial-glow"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CONTACT SECTION ========== -->
+  <section class="section contact" id="contact">
+    <div class="container">
+      <div class="section-header" data-animation="reveal">
+        <span class="section-number">06</span>
+        <h2 class="section-title">
+          <span class="title-line"><span>Let's</span></span>
+          <span class="title-line"><span>Connect<span class="accent">.</span></span></span>
+        </h2>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-info" data-animation="fade-up">
+          <p class="contact-intro">
+            Have a project in mind or just want to say hello? I'd love to hear from you. 
+            Let's create something amazing together.
+          </p>
+
+          <div class="contact-details">
+            <a href="mailto:hello@example.com" class="contact-item magnetic-btn">
+              <div class="contact-item-icon">
+                <i class="bi bi-envelope"></i>
+              </div>
+              <div>
+                <span class="contact-item-label">Email</span>
+                <span class="contact-item-value">hello@example.com</span>
+              </div>
+            </a>
+
+            <a href="tel:+1234567890" class="contact-item magnetic-btn">
+              <div class="contact-item-icon">
+                <i class="bi bi-telephone"></i>
+              </div>
+              <div>
+                <span class="contact-item-label">Phone</span>
+                <span class="contact-item-value">+1 234 567 890</span>
+              </div>
+            </a>
+
+            <div class="contact-item">
+              <div class="contact-item-icon">
+                <i class="bi bi-geo-alt"></i>
+              </div>
+              <div>
+                <span class="contact-item-label">Location</span>
+                <span class="contact-item-value">Your City, Country</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="contact-socials">
+            <a href="#" class="social-link magnetic-btn" aria-label="GitHub">
+              <i class="bi bi-github"></i>
+            </a>
+            <a href="#" class="social-link magnetic-btn" aria-label="LinkedIn">
+              <i class="bi bi-linkedin"></i>
+            </a>
+            <a href="#" class="social-link magnetic-btn" aria-label="Twitter">
+              <i class="bi bi-twitter-x"></i>
+            </a>
+            <a href="#" class="social-link magnetic-btn" aria-label="Instagram">
+              <i class="bi bi-instagram"></i>
+            </a>
+            <a href="#" class="social-link magnetic-btn" aria-label="Dribbble">
+              <i class="bi bi-dribbble"></i>
+            </a>
+          </div>
+        </div>
+
+        <form class="contact-form" data-animation="fade-up" id="contactForm">
+          <div class="form-group">
+            <div class="form-field">
+              <input type="text" id="name" required placeholder=" ">
+              <label for="name">Your Name</label>
+              <div class="form-field-line"></div>
+            </div>
+            <div class="form-field">
+              <input type="email" id="email" required placeholder=" ">
+              <label for="email">Your Email</label>
+              <div class="form-field-line"></div>
+            </div>
+          </div>
+          <div class="form-field">
+            <input type="text" id="subject" required placeholder=" ">
+            <label for="subject">Subject</label>
+            <div class="form-field-line"></div>
+          </div>
+          <div class="form-field">
+            <textarea id="message" rows="5" required placeholder=" "></textarea>
+            <label for="message">Your Message</label>
+            <div class="form-field-line"></div>
+          </div>
+          <button type="submit" class="btn-primary btn-submit magnetic-btn">
+            <span>Send Message</span>
+            <i class="bi bi-send"></i>
+            <div class="btn-shimmer"></div>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <span class="footer-logo">ERROR<span class="accent"> 404</span></span>
+          <p>Crafting digital experiences with passion and precision.</p>
+        </div>
+        <div class="footer-links">
+          <a href="#hero" class="magnetic-btn">Home</a>
+          <a href="#about" class="magnetic-btn">About</a>
+          <a href="#projects" class="magnetic-btn">Work</a>
+          <a href="#contact" class="magnetic-btn">Contact</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 ERROR 404. All rights reserved.</p>
+        <p>Designed & Built with <span class="accent">♥</span></p>
+      </div>
+    </div>
+    <div class="footer-glow"></div>
+  </footer>
+
+  <!-- ========== BACK TO TOP ========== -->
+  <button class="back-to-top magnetic-btn" id="backToTop" aria-label="Back to top">
+    <i class="bi bi-arrow-up"></i>
+  </button>
+
+  <!-- Noise overlay -->
+  <div class="noise-overlay"></div>
+
+  <!-- Main JS -->
+  <script src="assets/js/main.js"></script>
+</body>
+
+</html>
