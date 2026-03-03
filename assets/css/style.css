@@ -2638,6 +2638,288 @@ input, textarea {
   box-shadow: 0 15px 40px rgba(124, 58, 237, 0.4);
 }
 
+/* ==================== CINEMATIC ENHANCEMENTS ==================== */
+
+/* Hero ambient mesh gradient — subtle moving background */
+.hero-ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.hero-mesh {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  will-change: transform, opacity;
+}
+
+.hero-mesh-1 {
+  width: 40vw; height: 40vw;
+  background: rgba(124, 58, 237, 0.08);
+  top: 20%; left: 10%;
+  animation: ambientMesh1 15s ease-in-out infinite;
+}
+
+.hero-mesh-2 {
+  width: 35vw; height: 35vw;
+  background: rgba(6, 182, 212, 0.06);
+  top: 40%; right: 5%;
+  animation: ambientMesh2 18s ease-in-out infinite;
+}
+
+.hero-mesh-3 {
+  width: 30vw; height: 30vw;
+  background: rgba(236, 72, 153, 0.05);
+  bottom: 10%; left: 30%;
+  animation: ambientMesh3 20s ease-in-out infinite;
+}
+
+@keyframes ambientMesh1 {
+  0%, 100% { opacity: 0.3; transform: scale(1) translate(0, 0); }
+  33% { opacity: 0.5; transform: scale(1.15) translate(30px, -20px); }
+  66% { opacity: 0.35; transform: scale(0.9) translate(-20px, 25px); }
+}
+
+@keyframes ambientMesh2 {
+  0%, 100% { opacity: 0.25; transform: scale(1) translate(0, 0); }
+  33% { opacity: 0.4; transform: scale(1.1) translate(-25px, 15px); }
+  66% { opacity: 0.3; transform: scale(0.95) translate(15px, -10px); }
+}
+
+@keyframes ambientMesh3 {
+  0%, 100% { opacity: 0.2; transform: scale(1) translate(0, 0); }
+  33% { opacity: 0.35; transform: scale(1.2) translate(20px, -30px); }
+  66% { opacity: 0.25; transform: scale(0.85) translate(-10px, 20px); }
+}
+
+/* Cinematic reveal line */
+.hero-reveal-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--gradient-primary);
+  z-index: 5;
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.6), 0 0 80px rgba(124, 58, 237, 0.2);
+}
+
+/* Hero text depth enhancements */
+.hero-line {
+  perspective: 800px;
+}
+
+.hero-word {
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+}
+
+/* ==================== ENHANCED BUTTON MICRO-INTERACTIONS ==================== */
+
+/* Primary button — inner glow on hover */
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 120%, rgba(255,255,255,0.2), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.btn-primary:hover::after {
+  opacity: 1;
+}
+
+/* Outline button — enhanced border glow */
+.btn-outline:hover {
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.1),
+              0 15px 50px rgba(124, 58, 237, 0.15),
+              inset 0 0 30px rgba(124, 58, 237, 0.05);
+}
+
+/* Filter button active glow */
+.filter-btn.active {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.3),
+              0 0 60px rgba(124, 58, 237, 0.1);
+}
+
+/* ==================== ENHANCED CARD LIGHTING ==================== */
+
+/* White highlight layer in project card spotlight */
+.project-card::before {
+  background:
+    radial-gradient(
+      300px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(255, 255, 255, 0.03),
+      transparent 40%
+    ),
+    radial-gradient(
+      600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(124, 58, 237, 0.08),
+      transparent 40%
+    );
+}
+
+/* Enhanced skill category spotlight */
+.skill-category::before {
+  background:
+    radial-gradient(
+      200px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(255, 255, 255, 0.03),
+      transparent 40%
+    ),
+    radial-gradient(
+      400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(124, 58, 237, 0.06),
+      transparent 40%
+    );
+}
+
+/* Enhanced stat card hover */
+.stat-card:hover {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3),
+              0 0 30px rgba(124, 58, 237, 0.06);
+}
+
+/* Enhanced social link glow */
+.social-link:hover {
+  box-shadow: 0 15px 40px rgba(124, 58, 237, 0.4),
+              0 0 20px rgba(124, 58, 237, 0.2);
+}
+
+/* ==================== ENHANCED FORM ==================== */
+
+/* Enhanced form field focus glow */
+.form-field input:focus,
+.form-field textarea:focus {
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1),
+              0 8px 30px rgba(124, 58, 237, 0.08),
+              0 0 60px rgba(124, 58, 237, 0.04);
+}
+
+/* Smoother label float transition */
+.form-field label {
+  transition: all 0.4s var(--ease-out-expo);
+}
+
+/* ==================== SECTION DEPTH ==================== */
+
+.section {
+  transform-style: preserve-3d;
+}
+
+/* ==================== ENHANCED GRAIN ==================== */
+
+.noise-overlay {
+  mix-blend-mode: overlay;
+}
+
+/* ==================== SOUND TOGGLE ==================== */
+
+.sound-toggle {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  width: 44px;
+  height: 44px;
+  background: rgba(22, 22, 31, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: all 0.4s var(--ease-out-expo);
+  cursor: none;
+  overflow: hidden;
+  padding: 0;
+}
+
+.sound-toggle:hover {
+  border-color: var(--accent-1);
+  transform: scale(1.1);
+  box-shadow: 0 0 25px rgba(124, 58, 237, 0.3);
+}
+
+.sound-toggle-icon {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  transition: all 0.3s var(--ease-out-expo);
+  position: absolute;
+}
+
+.sound-toggle.active .sound-toggle-icon {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.sound-toggle-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 16px;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.3s var(--ease-out-expo);
+}
+
+.sound-toggle.active .sound-toggle-bars {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.sound-bar {
+  width: 3px;
+  background: var(--accent-1);
+  border-radius: 2px;
+}
+
+.sound-bar:nth-child(1) { height: 6px; animation: soundBar1 0.8s ease-in-out infinite; }
+.sound-bar:nth-child(2) { height: 12px; animation: soundBar2 0.8s ease-in-out 0.15s infinite; }
+.sound-bar:nth-child(3) { height: 8px; animation: soundBar3 0.8s ease-in-out 0.3s infinite; }
+
+@keyframes soundBar1 {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.3); }
+}
+
+@keyframes soundBar2 {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.5); }
+}
+
+@keyframes soundBar3 {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.4); }
+}
+
+/* ==================== CINEMATIC MOBILE OVERRIDES ==================== */
+
+@media (max-width: 768px) {
+  .hero-ambient { display: none; }
+  .hero-reveal-line { display: none; }
+  .sound-toggle { bottom: 20px; left: 20px; width: 40px; height: 40px; }
+}
+
+@media (max-width: 480px) {
+  .sound-toggle { bottom: 16px; left: 16px; width: 36px; height: 36px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-mesh { animation: none !important; opacity: 0.3; }
+  .hero-reveal-line { display: none; }
+  .sound-bar { animation: none !important; }
+}
+
 /* ==================== RESPONSIVE ==================== */
 
 /* ---------- Tablet landscape & small desktops ---------- */
