@@ -115,10 +115,11 @@
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-  <!-- GSAP + ScrollTrigger -->
+  <!-- GSAP + ScrollTrigger + Plugins -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
 
   <!-- Main CSS -->
   <link rel="stylesheet" href="assets/css/style.css">
@@ -128,27 +129,38 @@
   <!-- ========== CUSTOM CURSOR ========== -->
   <canvas class="cursor-canvas" id="cursorCanvas"></canvas>
 
-  <!-- ========== LOADER ========== -->
+  <!-- ========== LOADER — CINEMATIC INTRO ========== -->
   <div class="loader" id="loader">
     <div class="loader-inner">
-      <div class="loader-blocks">
-        <div class="loader-block" style="--i:0"></div>
-        <div class="loader-block" style="--i:1"></div>
-        <div class="loader-block" style="--i:2"></div>
-        <div class="loader-block" style="--i:3"></div>
-        <div class="loader-block" style="--i:4"></div>
+      <!-- Vertical blinds that sweep open -->
+      <div class="loader-blinds" id="loaderBlinds">
+        <div class="loader-blind"></div>
+        <div class="loader-blind"></div>
+        <div class="loader-blind"></div>
+        <div class="loader-blind"></div>
+        <div class="loader-blind"></div>
+        <div class="loader-blind"></div>
+        <div class="loader-blind"></div>
+        <div class="loader-blind"></div>
+        <div class="loader-blind"></div>
+        <div class="loader-blind"></div>
       </div>
-      <div class="loader-text">
-        <span class="loader-letter" style="--d:0">W</span>
-        <span class="loader-letter" style="--d:1">E</span>
-        <span class="loader-letter" style="--d:2">L</span>
-        <span class="loader-letter" style="--d:3">C</span>
-        <span class="loader-letter" style="--d:4">O</span>
-        <span class="loader-letter" style="--d:5">M</span>
-        <span class="loader-letter" style="--d:6">E</span>
-      </div>
-      <div class="loader-progress">
-        <div class="loader-progress-bar" id="loaderBar"></div>
+      <!-- Counter + text -->
+      <div class="loader-center">
+        <div class="loader-counter" id="loaderCounter">0</div>
+        <div class="loader-text">
+          <span class="loader-letter" style="--d:0">W</span>
+          <span class="loader-letter" style="--d:1">E</span>
+          <span class="loader-letter" style="--d:2">L</span>
+          <span class="loader-letter" style="--d:3">C</span>
+          <span class="loader-letter" style="--d:4">O</span>
+          <span class="loader-letter" style="--d:5">M</span>
+          <span class="loader-letter" style="--d:6">E</span>
+        </div>
+        <div class="loader-progress">
+          <div class="loader-progress-bar" id="loaderBar"></div>
+        </div>
+        <div class="loader-tagline">CREATIVE PORTFOLIO</div>
       </div>
     </div>
   </div>
@@ -215,6 +227,15 @@
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
 
+    <!-- Horizontal scroll lines -->
+    <div class="hero-grid-lines">
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+    </div>
+
     <div class="hero-content">
       <div class="hero-tag">
         <span class="hero-tag-dot"></span>
@@ -225,7 +246,7 @@
           <span class="hero-word" data-animation="reveal">Hello, I'm</span>
         </span>
         <span class="hero-line">
-          <span class="hero-word hero-name" data-animation="reveal">Sandeep<span class="visually-hidden"> Karmata</span></span>
+          <span class="hero-word hero-name" data-animation="reveal" data-split>Sandeep<span class="visually-hidden"> Karmata</span></span>
         </span>
         <span class="hero-line">
           <span class="hero-word" data-animation="reveal">I Create</span>
@@ -250,6 +271,13 @@
         <a href="#contact" class="btn-outline magnetic-btn">
           <span>Get in Touch</span>
         </a>
+      </div>
+      <!-- Scroll indicator -->
+      <div class="hero-scroll-cue" data-animation="fade-up">
+        <div class="scroll-mouse">
+          <div class="scroll-wheel"></div>
+        </div>
+        <span>Scroll to explore</span>
       </div>
     </div>
 
@@ -276,19 +304,40 @@
         <span>CREATIVE DEVELOPER</span>
         <span class="marquee-star">✦</span>
         <span>UI/UX DESIGNER</span>
-        <span class="marquee-star">✦</span>
+        <span class="marquee-star">◈</span>
         <span>PROBLEM SOLVER</span>
         <span class="marquee-star">✦</span>
         <span>DIGITAL CRAFTSMAN</span>
-        <span class="marquee-star">✦</span>
+        <span class="marquee-star">◈</span>
         <span>CREATIVE DEVELOPER</span>
         <span class="marquee-star">✦</span>
         <span>UI/UX DESIGNER</span>
-        <span class="marquee-star">✦</span>
+        <span class="marquee-star">◈</span>
         <span>PROBLEM SOLVER</span>
         <span class="marquee-star">✦</span>
         <span>DIGITAL CRAFTSMAN</span>
+        <span class="marquee-star">◈</span>
+      </div>
+    </div>
+    <!-- Reverse direction second row -->
+    <div class="marquee-track marquee-reverse">
+      <div class="marquee-content">
+        <span>FULL STACK</span>
         <span class="marquee-star">✦</span>
+        <span>MOTION DESIGN</span>
+        <span class="marquee-star">◈</span>
+        <span>INNOVATION</span>
+        <span class="marquee-star">✦</span>
+        <span>WEB ARCHITECT</span>
+        <span class="marquee-star">◈</span>
+        <span>FULL STACK</span>
+        <span class="marquee-star">✦</span>
+        <span>MOTION DESIGN</span>
+        <span class="marquee-star">◈</span>
+        <span>INNOVATION</span>
+        <span class="marquee-star">✦</span>
+        <span>WEB ARCHITECT</span>
+        <span class="marquee-star">◈</span>
       </div>
     </div>
   </div>
@@ -721,10 +770,20 @@
   <!-- ========== BIG TEXT MARQUEE ========== -->
   <div class="big-text-section">
     <div class="big-text-track" data-scroll-speed="-0.5">
+      <span class="big-text" data-magnetic-text>LET'S CREATE SOMETHING</span>
+      <span class="big-text outline">EXTRAORDINARY</span>
+      <span class="big-text" data-magnetic-text>TOGETHER</span>
+      <span class="big-text outline">✦</span>
       <span class="big-text">LET'S CREATE SOMETHING</span>
       <span class="big-text outline">EXTRAORDINARY</span>
-      <span class="big-text">TOGETHER</span>
+    </div>
+    <div class="big-text-track big-text-reverse" data-scroll-speed="0.3">
+      <span class="big-text outline">INNOVATION</span>
+      <span class="big-text">CREATIVITY</span>
       <span class="big-text outline">✦</span>
+      <span class="big-text">EXCELLENCE</span>
+      <span class="big-text outline">DESIGN</span>
+      <span class="big-text">✦</span>
     </div>
   </div>
 
