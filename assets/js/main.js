@@ -148,8 +148,13 @@ class Particle {
 }
 
 // Create particles
+const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+const isMobile = window.innerWidth <= 768;
+
 function initParticles() {
-  const count = Math.min(150, Math.floor(window.innerWidth * 0.1));
+  const count = isMobile
+    ? Math.min(30, Math.floor(window.innerWidth * 0.05))
+    : Math.min(150, Math.floor(window.innerWidth * 0.1));
   particles = [];
   for (let i = 0; i < count; i++) {
     particles.push(new Particle());
@@ -157,8 +162,9 @@ function initParticles() {
 }
 initParticles();
 
-// Draw connections
+// Draw connections — skip on mobile for performance
 function drawConnections() {
+  if (isMobile) return;
   for (let i = 0; i < particles.length; i++) {
     for (let j = i + 1; j < particles.length; j++) {
       const dx = particles[i].x - particles[j].x;
@@ -228,7 +234,7 @@ function initAnimations() {
         trigger: header,
         start: 'top 85%',
         end: 'bottom 20%',
-        toggleActions: 'play none none reverse'
+        toggleActions: 'play none none none'
       }
     });
 
@@ -262,7 +268,7 @@ function initAnimations() {
       scrollTrigger: {
         trigger: el,
         start: 'top 85%',
-        toggleActions: 'play none none reverse'
+        toggleActions: 'play none none none'
       }
     });
   });
@@ -279,7 +285,7 @@ function initAnimations() {
       scrollTrigger: {
         trigger: stat,
         start: 'top 85%',
-        toggleActions: 'play none none reverse'
+        toggleActions: 'play none none none'
       },
       onUpdate: () => {
         stat.textContent = Math.round(counter.value);
@@ -297,7 +303,7 @@ function initAnimations() {
       scrollTrigger: {
         trigger: bar,
         start: 'top 90%',
-        toggleActions: 'play none none reverse'
+        toggleActions: 'play none none none'
       }
     });
   });
@@ -326,89 +332,67 @@ function initAnimations() {
     }
   });
 
-  // Project cards stagger
-  gsap.utils.toArray('.project-card').forEach((card, i) => {
-    gsap.from(card, {
-      opacity: 0,
-      y: 60,
-      scale: 0.95,
-      duration: 0.8,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: card,
-        start: 'top 85%',
-        toggleActions: 'play none none reverse'
-      },
-      delay: (i % 3) * 0.1
-    });
-  });
-
   // Testimonial cards
   gsap.utils.toArray('.testimonial-card').forEach((card, i) => {
-    gsap.from(card, {
-      opacity: 0,
-      y: 50,
-      rotateY: -5,
-      duration: 0.8,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: card,
-        start: 'top 85%',
-        toggleActions: 'play none none reverse'
-      },
-      delay: i * 0.15
-    });
-  });
-
-  // Skill categories stagger
-  gsap.utils.toArray('.skill-category').forEach((cat, i) => {
-    gsap.from(cat, {
-      opacity: 0,
-      y: 40,
-      scale: 0.97,
-      duration: 0.7,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: cat,
-        start: 'top 85%',
-        toggleActions: 'play none none reverse'
-      },
-      delay: i * 0.1
-    });
+    gsap.fromTo(card,
+      { opacity: 0, y: 50, rotateY: -5 },
+      {
+        opacity: 1,
+        y: 0,
+        rotateY: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 85%',
+          toggleActions: 'play none none none'
+        },
+        delay: i * 0.15
+      }
+    );
   });
 
   // Contact items slide in
   gsap.utils.toArray('.contact-item').forEach((item, i) => {
-    gsap.from(item, {
-      opacity: 0,
-      x: -30,
-      duration: 0.6,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: item,
-        start: 'top 90%',
-        toggleActions: 'play none none reverse'
-      },
-      delay: i * 0.1
-    });
+    gsap.fromTo(item,
+      { opacity: 0, x: -30 },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 0.6,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: item,
+          start: 'top 90%',
+          toggleActions: 'play none none none'
+        },
+        delay: i * 0.1
+      }
+    );
   });
 
   // Social links
   gsap.utils.toArray('.social-link').forEach((link, i) => {
-    gsap.from(link, {
-      opacity: 0,
-      y: 20,
-      scale: 0.5,
-      duration: 0.5,
-      ease: 'back.out(2)',
-      scrollTrigger: {
-        trigger: link.parentElement,
-        start: 'top 90%',
-        toggleActions: 'play none none reverse'
-      },
-      delay: i * 0.08
-    });
+    gsap.fromTo(link,
+      { opacity: 0, y: 20, scale: 0.5 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.5,
+        ease: 'back.out(2)',
+        scrollTrigger: {
+          trigger: link.parentElement,
+          start: 'top 90%',
+          toggleActions: 'play none none none'
+        },
+        delay: i * 0.08
+      }
+    );
   });
+
+  // Refresh ScrollTrigger after all animations are registered
+  ScrollTrigger.refresh();
 }
 
 // ==================== NAVIGATION ====================
@@ -554,54 +538,60 @@ contactForm.addEventListener('submit', (e) => {
 });
 
 // ==================== TILT EFFECT ON CARDS ====================
-document.querySelectorAll('.project-card, .skill-category, .testimonial-card').forEach(card => {
-  card.addEventListener('mousemove', (e) => {
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = (y - centerY) / 20;
-    const rotateY = (centerX - x) / 20;
+if (!isTouchDevice) {
+  document.querySelectorAll('.project-card, .skill-category, .testimonial-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = (y - centerY) / 20;
+      const rotateY = (centerX - x) / 20;
 
-    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
-  });
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+    });
 
-  card.addEventListener('mouseleave', () => {
-    card.style.transform = '';
-  });
-});
-
-// ==================== PARALLAX FLOATING SHAPES ====================
-window.addEventListener('mousemove', (e) => {
-  const shapes = document.querySelectorAll('.shape');
-  const x = e.clientX / window.innerWidth;
-  const y = e.clientY / window.innerHeight;
-
-  shapes.forEach((shape, i) => {
-    const speed = (i + 1) * 15;
-    const offsetX = (x - 0.5) * speed;
-    const offsetY = (y - 0.5) * speed;
-    shape.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-  });
-});
-
-// ==================== ORB MOUSE FOLLOW ====================
-document.addEventListener('mousemove', (e) => {
-  const orbs = document.querySelectorAll('.orb');
-  const x = e.clientX / window.innerWidth;
-  const y = e.clientY / window.innerHeight;
-
-  orbs.forEach((orb, i) => {
-    const speed = (i + 1) * 20;
-    gsap.to(orb, {
-      x: (x - 0.5) * speed,
-      y: (y - 0.5) * speed,
-      duration: 2,
-      ease: 'power2.out'
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
     });
   });
-});
+}
+
+// ==================== PARALLAX FLOATING SHAPES ====================
+if (!isTouchDevice) {
+  window.addEventListener('mousemove', (e) => {
+    const shapes = document.querySelectorAll('.shape');
+    const x = e.clientX / window.innerWidth;
+    const y = e.clientY / window.innerHeight;
+
+    shapes.forEach((shape, i) => {
+      const speed = (i + 1) * 15;
+      const offsetX = (x - 0.5) * speed;
+      const offsetY = (y - 0.5) * speed;
+      shape.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+    });
+  });
+}
+
+// ==================== ORB MOUSE FOLLOW ====================
+if (!isTouchDevice) {
+  document.addEventListener('mousemove', (e) => {
+    const orbs = document.querySelectorAll('.orb');
+    const x = e.clientX / window.innerWidth;
+    const y = e.clientY / window.innerHeight;
+
+    orbs.forEach((orb, i) => {
+      const speed = (i + 1) * 20;
+      gsap.to(orb, {
+        x: (x - 0.5) * speed,
+        y: (y - 0.5) * speed,
+        duration: 2,
+        ease: 'power2.out'
+      });
+    });
+  });
+}
 
 // ==================== SMOOTH REVEAL ON SCROLL ====================
 // Add intersection observer for elements without GSAP
