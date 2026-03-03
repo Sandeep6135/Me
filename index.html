@@ -4,8 +4,107 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sandeep's Creative Portfolio</title>
-  <meta name="description" content="A hell-creative, fully animated portfolio">
+
+  <!-- ========== SEO META TAGS ========== -->
+  <title>Sandeep Karmata — Creative Developer & Designer | Portfolio</title>
+  <meta name="description" content="Sandeep Karmata is a creative developer & UI/UX designer from Gujarat, India. Explore his portfolio showcasing stunning web experiences, innovative projects, and digital craftsmanship.">
+  <meta name="keywords" content="Sandeep Karmata, Sandeep, Karmata, creative developer, web developer, UI UX designer, portfolio, frontend developer, full stack developer, Gujarat India, digital experiences, web design">
+  <meta name="author" content="Sandeep Karmata">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow, max-image-preview:large">
+  <meta name="theme-color" content="#7C3AED">
+  <link rel="canonical" href="https://sandeep6135.github.io/Me/">
+
+  <!-- ========== OPEN GRAPH (Facebook, LinkedIn, etc.) ========== -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sandeep Karmata — Creative Developer & Designer">
+  <meta property="og:description" content="Explore the portfolio of Sandeep Karmata — a creative developer & UI/UX designer crafting stunning digital experiences from Gujarat, India.">
+  <meta property="og:image" content="https://sandeep6135.github.io/Me/assets/img/Sandeep.png">
+  <meta property="og:image:alt" content="Sandeep Karmata — Creative Developer & Designer">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://sandeep6135.github.io/Me/">
+  <meta property="og:site_name" content="Sandeep Karmata Portfolio">
+  <meta property="og:locale" content="en_US">
+
+  <!-- ========== TWITTER CARD ========== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Sandeep Karmata — Creative Developer & Designer">
+  <meta name="twitter:description" content="Explore the portfolio of Sandeep Karmata — a creative developer & UI/UX designer crafting stunning digital experiences.">
+  <meta name="twitter:image" content="https://sandeep6135.github.io/Me/assets/img/Sandeep.png">
+  <meta name="twitter:image:alt" content="Sandeep Karmata — Creative Developer">
+
+  <!-- ========== JSON-LD STRUCTURED DATA ========== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "mainEntity": {
+      "@type": "Person",
+      "@id": "https://sandeep6135.github.io/Me/#sandeep",
+      "name": "Sandeep Karmata",
+      "givenName": "Sandeep",
+      "familyName": "Karmata",
+      "url": "https://sandeep6135.github.io/Me/",
+      "jobTitle": "Creative Developer & UI/UX Designer",
+      "description": "A passionate creative developer & UI/UX designer from Gujarat, India who transforms ideas into stunning digital experiences.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressRegion": "Gujarat",
+        "addressCountry": "IN",
+        "postalCode": "362220"
+      },
+      "email": "mailto:Sandeepkarmata1991@gmail.com",
+      "image": [
+        {
+          "@type": "ImageObject",
+          "url": "https://sandeep6135.github.io/Me/assets/img/Sandeep.png",
+          "name": "Sandeep Karmata - Creative Developer Portrait",
+          "description": "Photo of Sandeep Karmata, creative developer and UI/UX designer from Gujarat, India",
+          "width": 800,
+          "height": 800
+        },
+        {
+          "@type": "ImageObject",
+          "url": "https://sandeep6135.github.io/Me/assets/img/DP.png",
+          "name": "Sandeep Karmata - Profile Picture",
+          "description": "Profile picture of Sandeep Karmata, web developer and designer"
+        },
+        {
+          "@type": "ImageObject",
+          "url": "https://sandeep6135.github.io/Me/assets/img/Sandeep.jpg",
+          "name": "Sandeep Karmata - Professional Photo",
+          "description": "Professional photo of Sandeep Karmata, full stack developer"
+        },
+        {
+          "@type": "ImageObject",
+          "url": "https://sandeep6135.github.io/Me/assets/img/Sandeep.jpeg",
+          "name": "Sandeep Karmata - Developer Photo",
+          "description": "Photo of Sandeep Karmata, creative frontend developer"
+        }
+      ],
+      "sameAs": [
+        "https://www.linkedin.com/in/sandeepkarmata",
+        "https://github.com/Sandeep6135"
+      ],
+      "knowsAbout": ["Web Development", "UI/UX Design", "Frontend Development", "Full Stack Development", "JavaScript", "React", "Creative Design", "Digital Experiences"]
+    }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Sandeep Karmata Portfolio",
+    "url": "https://sandeep6135.github.io/Me/",
+    "description": "Portfolio website of Sandeep Karmata — Creative Developer & UI/UX Designer",
+    "author": {
+      "@type": "Person",
+      "name": "Sandeep Karmata"
+    }
+  }
+  </script>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,8 +125,7 @@
 
 <body>
   <!-- ========== CUSTOM CURSOR ========== -->
-  <div class="cursor-dot" id="cursorDot"></div>
-  <div class="cursor-ring" id="cursorRing"></div>
+  <canvas class="cursor-canvas" id="cursorCanvas"></canvas>
 
   <!-- ========== LOADER ========== -->
   <div class="loader" id="loader">
@@ -126,7 +224,7 @@
           <span class="hero-word" data-animation="reveal">Hello, I'm</span>
         </span>
         <span class="hero-line">
-          <span class="hero-word hero-name" data-animation="reveal">Sandeep</span>
+          <span class="hero-word hero-name" data-animation="reveal">Sandeep<span class="visually-hidden"> Karmata</span></span>
         </span>
         <span class="hero-line">
           <span class="hero-word" data-animation="reveal">I Create</span>
@@ -224,11 +322,11 @@
               <div class="slide-glitch-layer" id="glitchLayer1"></div>
               <div class="slide-glitch-layer" id="glitchLayer2"></div>
               <!-- Images -->
-              <img src="assets/img/Sandeep.png" alt="Sandeep" class="slide-img active" loading="eager" decoding="async">
-              <img src="assets/img/DP.png" alt="Sandeep" class="slide-img" loading="lazy" decoding="async">
-              <img src="assets/img/Sandeep.jpg" alt="Sandeep" class="slide-img" loading="lazy" decoding="async">
-              <img src="assets/img/Breached.png" alt="Sandeep" class="slide-img" loading="lazy" decoding="async">
-              <img src="assets/img/Sandeep.jpeg" alt="Sandeep" class="slide-img" loading="lazy" decoding="async">
+              <img src="assets/img/Sandeep.png" alt="Sandeep Karmata - Creative Developer & Designer Portfolio Photo" class="slide-img active" loading="eager" decoding="async" title="Sandeep Karmata" itemprop="image">
+              <img src="assets/img/DP.png" alt="Sandeep Karmata - Profile Picture" class="slide-img" loading="lazy" decoding="async" title="Sandeep Karmata Profile">
+              <img src="assets/img/Sandeep.jpg" alt="Sandeep Karmata - Professional Photo" class="slide-img" loading="lazy" decoding="async" title="Sandeep Karmata">
+              <img src="assets/img/Breached.png" alt="Sandeep Karmata - Creative Developer" class="slide-img" loading="lazy" decoding="async" title="Sandeep Karmata">
+              <img src="assets/img/Sandeep.jpeg" alt="Sandeep Karmata - Web Developer & UI UX Designer" class="slide-img" loading="lazy" decoding="async" title="Sandeep Karmata">
               <!-- Transition name label -->
               <div class="slide-fx-label" id="slideFxLabel"></div>
               <!-- Slide indicators -->
@@ -803,23 +901,13 @@
           </p>
 
           <div class="contact-details">
-            <a href="mailto:hello@example.com" class="contact-item magnetic-btn">
+            <a href="mailto:Sandeepkarmata1991@gmail.com" class="contact-item magnetic-btn">
               <div class="contact-item-icon">
                 <i class="bi bi-envelope"></i>
               </div>
               <div>
                 <span class="contact-item-label">Email</span>
-                <span class="contact-item-value">hello@example.com</span>
-              </div>
-            </a>
-
-            <a href="tel:+1234567890" class="contact-item magnetic-btn">
-              <div class="contact-item-icon">
-                <i class="bi bi-telephone"></i>
-              </div>
-              <div>
-                <span class="contact-item-label">Phone</span>
-                <span class="contact-item-value">+1 234 567 890</span>
+                <span class="contact-item-value">Sandeepkarmata1991@gmail.com</span>
               </div>
             </a>
 
@@ -829,26 +917,17 @@
               </div>
               <div>
                 <span class="contact-item-label">Location</span>
-                <span class="contact-item-value">Your City, Country</span>
+                <span class="contact-item-value">Gujarat, India</span>
               </div>
             </div>
           </div>
 
           <div class="contact-socials">
-            <a href="#" class="social-link magnetic-btn" aria-label="GitHub">
+            <a href="https://github.com/Sandeep6135" target="_blank" rel="noopener noreferrer" class="social-link magnetic-btn" aria-label="Sandeep Karmata on GitHub">
               <i class="bi bi-github"></i>
             </a>
-            <a href="#" class="social-link magnetic-btn" aria-label="LinkedIn">
+            <a href="https://www.linkedin.com/in/sandeepkarmata" target="_blank" rel="noopener noreferrer" class="social-link magnetic-btn" aria-label="Sandeep Karmata on LinkedIn">
               <i class="bi bi-linkedin"></i>
-            </a>
-            <a href="#" class="social-link magnetic-btn" aria-label="Twitter">
-              <i class="bi bi-twitter-x"></i>
-            </a>
-            <a href="#" class="social-link magnetic-btn" aria-label="Instagram">
-              <i class="bi bi-instagram"></i>
-            </a>
-            <a href="#" class="social-link magnetic-btn" aria-label="Dribbble">
-              <i class="bi bi-dribbble"></i>
             </a>
           </div>
         </div>

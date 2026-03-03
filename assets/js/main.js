@@ -21,40 +21,204 @@ const loadInterval = setInterval(() => {
   loaderBar.style.width = loadProgress + '%';
 }, 100);
 
-// ==================== CUSTOM CURSOR ====================
-const cursorDot = document.getElementById('cursorDot');
-const cursorRing = document.getElementById('cursorRing');
-let mouseX = 0, mouseY = 0;
-let ringX = 0, ringY = 0;
+// ==================== CUSTOM CURSOR — AURORA RING ====================
+// A minimal glowing ring that follows the mouse with spring physics,
+// morphs shape based on velocity, and has magnetic hover + click FX.
+
+const cursorCanvas = document.getElementById('cursorCanvas');
+const cursorCtx = cursorCanvas.getContext('2d');
+
+let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+
+function resizeCursorCanvas() {
+  cursorCanvas.width = window.innerWidth;
+  cursorCanvas.height = window.innerHeight;
+}
+resizeCursorCanvas();
+window.addEventListener('resize', resizeCursorCanvas);
+
+// Spring physics state
+const cursor = {
+  x: window.innerWidth / 2,
+  y: window.innerHeight / 2,
+  vx: 0,
+  vy: 0,
+  scale: 1,
+  targetScale: 1,
+  rotation: 0,
+  // Ring properties
+  baseRadius: 16,
+  radius: 16,
+  // Dot inside the ring
+  dotX: window.innerWidth / 2,
+  dotY: window.innerHeight / 2,
+};
+
+// Physics constants — stiff spring for snappy feel
+const SPRING = 0.12;
+const DAMPING = 0.72;
+const DOT_EASE = 0.25;
+
+// State
+let isHovering = false;
+let isClicking = false;
+let hoverTarget = null;
+let clickFlash = 0;
+let cursorHue = 260; // Start purple to match theme
+
+// Aurora particles — tiny sparkles that orbit the ring
+const SPARKLE_COUNT = 6;
+const sparkles = [];
+for (let i = 0; i < SPARKLE_COUNT; i++) {
+  sparkles.push({
+    angle: (Math.PI * 2 / SPARKLE_COUNT) * i,
+    speed: 0.008 + Math.random() * 0.012,
+    distance: 0,
+    targetDistance: 0,
+    size: 1 + Math.random() * 1.5,
+    hueOffset: i * 40,
+    opacity: 0,
+  });
+}
 
 document.addEventListener('mousemove', (e) => {
   mouseX = e.clientX;
   mouseY = e.clientY;
-  cursorDot.style.left = mouseX + 'px';
-  cursorDot.style.top = mouseY + 'px';
 });
 
-function animateCursorRing() {
-  ringX += (mouseX - ringX) * 0.15;
-  ringY += (mouseY - ringY) * 0.15;
-  cursorRing.style.left = ringX + 'px';
-  cursorRing.style.top = ringY + 'px';
-  requestAnimationFrame(animateCursorRing);
+document.addEventListener('mousedown', () => {
+  isClicking = true;
+  clickFlash = 1;
+  cursor.targetScale = 0.6;
+});
+document.addEventListener('mouseup', () => {
+  isClicking = false;
+  cursor.targetScale = isHovering ? 1.8 : 1;
+});
+
+// Hover detection
+function setupCursorHovers() {
+  document.querySelectorAll('a, button, .magnetic-btn, .project-card, .filter-btn, .social-link, .skill-category, .contact-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      isHovering = true;
+      hoverTarget = el;
+      cursor.targetScale = 1.8;
+    });
+    el.addEventListener('mouseleave', () => {
+      isHovering = false;
+      hoverTarget = null;
+      cursor.targetScale = 1;
+    });
+  });
 }
-animateCursorRing();
+setupCursorHovers();
 
-// Hover effects for interactive elements
-const hoverables = document.querySelectorAll('a, button, .magnetic-btn, input, textarea');
-hoverables.forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    cursorDot.classList.add('hovering');
-    cursorRing.classList.add('hovering');
+function drawCursor() {
+  cursorCtx.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+
+  // ── Spring physics for the ring ──
+  const dx = mouseX - cursor.x;
+  const dy = mouseY - cursor.y;
+  cursor.vx += dx * SPRING;
+  cursor.vy += dy * SPRING;
+  cursor.vx *= DAMPING;
+  cursor.vy *= DAMPING;
+  cursor.x += cursor.vx;
+  cursor.y += cursor.vy;
+
+  // ── Direct dot (fast follow, inside ring) ──
+  cursor.dotX += (mouseX - cursor.dotX) * DOT_EASE;
+  cursor.dotY += (mouseY - cursor.dotY) * DOT_EASE;
+
+  // ── Velocity-based distortion ──
+  const speed = Math.sqrt(cursor.vx * cursor.vx + cursor.vy * cursor.vy);
+  const angle = Math.atan2(cursor.vy, cursor.vx);
+  const stretch = Math.min(speed * 0.06, 0.5); // max 50% stretch
+
+  // ── Smooth scale ──
+  cursor.scale += (cursor.targetScale - cursor.scale) * 0.1;
+
+  // ── Slow hue cycle for aurora effect ──
+  cursorHue = (cursorHue + 0.15) % 360;
+
+  // ── Click flash decay ──
+  if (clickFlash > 0) clickFlash *= 0.88;
+
+  const r = cursor.baseRadius * cursor.scale;
+
+  cursorCtx.save();
+  cursorCtx.translate(cursor.x, cursor.y);
+  cursorCtx.rotate(angle);
+
+  // ── Outer glow ──
+  const glowRadius = r * 2.5;
+  const glow = cursorCtx.createRadialGradient(0, 0, r * 0.5, 0, 0, glowRadius);
+  glow.addColorStop(0, `hsla(${cursorHue}, 80%, 60%, ${0.06 + clickFlash * 0.15})`);
+  glow.addColorStop(0.5, `hsla(${(cursorHue + 40) % 360}, 70%, 50%, ${0.02 + clickFlash * 0.06})`);
+  glow.addColorStop(1, 'hsla(0, 0%, 0%, 0)');
+  cursorCtx.beginPath();
+  cursorCtx.arc(0, 0, glowRadius, 0, Math.PI * 2);
+  cursorCtx.fillStyle = glow;
+  cursorCtx.fill();
+
+  // ── Main ring (velocity-stretched ellipse) ──
+  const sx = 1 + stretch;
+  const sy = 1 - stretch * 0.4;
+  cursorCtx.scale(sx, sy);
+
+  // Ring stroke with gradient
+  const ringAlpha = isHovering ? 0.7 : 0.55;
+  cursorCtx.beginPath();
+  cursorCtx.arc(0, 0, r, 0, Math.PI * 2);
+  cursorCtx.strokeStyle = `hsla(${cursorHue}, 75%, 70%, ${ringAlpha})`;
+  cursorCtx.lineWidth = isHovering ? 2 : 1.5;
+  cursorCtx.stroke();
+
+  // Second ring — slightly larger, different hue, offset phase
+  cursorCtx.beginPath();
+  cursorCtx.arc(0, 0, r + 3, 0, Math.PI * 2);
+  cursorCtx.strokeStyle = `hsla(${(cursorHue + 60) % 360}, 70%, 65%, ${ringAlpha * 0.25})`;
+  cursorCtx.lineWidth = 0.8;
+  cursorCtx.stroke();
+
+  cursorCtx.restore();
+
+  // ── Aurora sparkles orbiting ring ──
+  sparkles.forEach((s) => {
+    s.angle += s.speed;
+    s.targetDistance = isHovering ? r * cursor.scale + 6 : r * cursor.scale - 2;
+    s.distance += (s.targetDistance - s.distance) * 0.08;
+    s.opacity += ((isHovering ? 0.7 : 0.35) - s.opacity) * 0.05;
+
+    const sx = cursor.x + Math.cos(s.angle) * s.distance;
+    const sy = cursor.y + Math.sin(s.angle) * s.distance;
+    const hue = (cursorHue + s.hueOffset) % 360;
+
+    cursorCtx.beginPath();
+    cursorCtx.arc(sx, sy, s.size * cursor.scale, 0, Math.PI * 2);
+    cursorCtx.fillStyle = `hsla(${hue}, 80%, 70%, ${s.opacity})`;
+    cursorCtx.fill();
   });
-  el.addEventListener('mouseleave', () => {
-    cursorDot.classList.remove('hovering');
-    cursorRing.classList.remove('hovering');
-  });
-});
+
+  // ── Center dot (fast-follow, always snappy) ──
+  const dotSize = isClicking ? 2 : 3;
+  cursorCtx.beginPath();
+  cursorCtx.arc(cursor.dotX, cursor.dotY, dotSize, 0, Math.PI * 2);
+  cursorCtx.fillStyle = `hsla(${cursorHue}, 70%, 85%, 0.9)`;
+  cursorCtx.fill();
+
+  // Click flash ring
+  if (clickFlash > 0.01) {
+    cursorCtx.beginPath();
+    cursorCtx.arc(cursor.x, cursor.y, r * (1 + (1 - clickFlash) * 2), 0, Math.PI * 2);
+    cursorCtx.strokeStyle = `hsla(${cursorHue}, 80%, 75%, ${clickFlash * 0.6})`;
+    cursorCtx.lineWidth = 1;
+    cursorCtx.stroke();
+  }
+
+  requestAnimationFrame(drawCursor);
+}
+drawCursor();
 
 // ==================== MAGNETIC BUTTONS ====================
 const magneticBtns = document.querySelectorAll('.magnetic-btn');
@@ -322,7 +486,7 @@ function initAnimations() {
 
   // Big text parallax
   gsap.to('.big-text-track', {
-    x: '-30%',
+    x: '-15%',
     ease: 'none',
     scrollTrigger: {
       trigger: '.big-text-section',

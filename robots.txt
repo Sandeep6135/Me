@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sandeep6135.github.io/Me/sitemap.xml
+
+# Sandeep Karmata Portfolio
+# https://sandeep6135.github.io/Me/
