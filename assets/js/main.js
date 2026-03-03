@@ -252,7 +252,15 @@ animateParticles();
 
 // ==================== SPLIT TEXT UTILITY ====================
 function splitTextIntoChars(el) {
-  const text = el.textContent;
+  // Preserve visually-hidden elements for SEO
+  const hiddenEls = Array.from(el.querySelectorAll('.visually-hidden')).map(h => h.cloneNode(true));
+
+  // Only split direct text nodes (exclude hidden children)
+  let text = '';
+  el.childNodes.forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE) text += node.textContent;
+  });
+
   el.innerHTML = '';
   text.split('').forEach((char, i) => {
     const span = document.createElement('span');
@@ -261,6 +269,9 @@ function splitTextIntoChars(el) {
     span.style.setProperty('--char-index', i);
     el.appendChild(span);
   });
+
+  // Re-append hidden elements
+  hiddenEls.forEach(h => el.appendChild(h));
   return el.querySelectorAll('.char');
 }
 
@@ -587,32 +598,81 @@ navHamburger.addEventListener('click', () => {
   mobileMenu.classList.toggle('active');
 });
 
-// ==================== ROTATING WORDS — with glitch flash ====================
+// ==================== ROTATING WORDS — FUTURISTIC RANDOM TRANSITIONS ====================
 const rotatingWords = document.querySelectorAll('.rotating-word');
 let currentWordIndex = 0;
+let lastWordAnim = -1;
+
+// Pool of futuristic exit/enter animation pairs
+const wordAnimations = [
+  { // Glitch dissolve
+    exit:  { y: -40, opacity: 0, scale: 1.3, rotateZ: 4, filter: 'blur(8px)', duration: 0.35 },
+    enter: { from: { y: 50, opacity: 0, scale: 0.6, rotateZ: -3, filter: 'blur(8px)' },
+             to: { y: 0, opacity: 1, scale: 1, rotateZ: 0, filter: 'blur(0px)', duration: 0.55 } }
+  },
+  { // Cyber flip X
+    exit:  { rotateX: 90, opacity: 0, y: -20, duration: 0.4 },
+    enter: { from: { rotateX: -90, opacity: 0, y: 20 },
+             to: { rotateX: 0, opacity: 1, y: 0, duration: 0.5 } }
+  },
+  { // Matrix fall
+    exit:  { y: 80, opacity: 0, scaleY: 0.3, duration: 0.35 },
+    enter: { from: { y: -80, opacity: 0, scaleY: 2.5 },
+             to: { y: 0, opacity: 1, scaleY: 1, duration: 0.5 } }
+  },
+  { // Hologram scale
+    exit:  { scale: 3, opacity: 0, filter: 'blur(12px)', duration: 0.4 },
+    enter: { from: { scale: 0, opacity: 0, filter: 'blur(12px)' },
+             to: { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.55 } }
+  },
+  { // Sideways warp
+    exit:  { x: -120, opacity: 0, skewX: -25, scaleX: 0.5, duration: 0.4 },
+    enter: { from: { x: 120, opacity: 0, skewX: 25, scaleX: 0.5 },
+             to: { x: 0, opacity: 1, skewX: 0, scaleX: 1, duration: 0.55 } }
+  },
+  { // Neon flicker
+    exit:  { opacity: 0, scale: 0.8, rotateY: 90, duration: 0.35 },
+    enter: { from: { opacity: 0, scale: 0.8, rotateY: -90 },
+             to: { opacity: 1, scale: 1, rotateY: 0, duration: 0.55 } }
+  },
+  { // Data stream
+    exit:  { y: -60, x: 30, opacity: 0, rotateZ: 8, scale: 0.7, duration: 0.35 },
+    enter: { from: { y: 60, x: -30, opacity: 0, rotateZ: -8, scale: 0.7 },
+             to: { y: 0, x: 0, opacity: 1, rotateZ: 0, scale: 1, duration: 0.55 } }
+  },
+  { // Pixel crush
+    exit:  { scaleX: 0, opacity: 0, filter: 'blur(4px)', duration: 0.3 },
+    enter: { from: { scaleX: 0, opacity: 0, filter: 'blur(4px)' },
+             to: { scaleX: 1, opacity: 1, filter: 'blur(0px)', duration: 0.55 } }
+  }
+];
+
+function getRandomWordAnim() {
+  let idx;
+  do { idx = Math.floor(Math.random() * wordAnimations.length); } while (idx === lastWordAnim);
+  lastWordAnim = idx;
+  return wordAnimations[idx];
+}
 
 function rotateWords() {
   const current = rotatingWords[currentWordIndex];
-  const next = rotatingWords[(currentWordIndex + 1) % rotatingWords.length];
+  currentWordIndex = (currentWordIndex + 1) % rotatingWords.length;
+  const next = rotatingWords[currentWordIndex];
+  const anim = getRandomWordAnim();
 
   gsap.to(current, {
-    y: -30, rotateX: 30, opacity: 0,
-    duration: 0.4, ease: 'power3.in',
+    ...anim.exit,
+    ease: 'power3.in',
     onComplete: () => {
       current.classList.remove('active');
       current.style.cssText = '';
+
+      next.classList.add('active');
+      gsap.fromTo(next, anim.enter.from, {
+        ...anim.enter.to,
+        ease: 'back.out(1.4)',
+      });
     }
-  });
-
-  currentWordIndex = (currentWordIndex + 1) % rotatingWords.length;
-
-  gsap.fromTo(next, {
-    y: 30, rotateX: -30, opacity: 0,
-  }, {
-    y: 0, rotateX: 0, opacity: 1,
-    duration: 0.5, ease: 'power3.out',
-    delay: 0.3,
-    onStart: () => next.classList.add('active'),
   });
 }
 setInterval(rotateWords, 2500);
@@ -689,7 +749,8 @@ if (!isTouchDevice) {
     const x = e.clientX / window.innerWidth, y = e.clientY / window.innerHeight;
     shapes.forEach((shape, i) => {
       const speed = (i + 1) * 15;
-      shape.style.transform = `translate(${(x - 0.5) * speed}px, ${(y - 0.5) * speed}px)`;
+      shape.style.setProperty('--mx', `${(x - 0.5) * speed}px`);
+      shape.style.setProperty('--my', `${(y - 0.5) * speed}px`);
     });
   });
 }
@@ -754,8 +815,8 @@ if (slideshow) {
   const glitchLayer1 = document.getElementById('glitchLayer1');
   const glitchLayer2 = document.getElementById('glitchLayer2');
   let currentSlide = 0;
-  let slideInterval;
-  const slideDuration = 4000;
+  let slideTimeout;
+  const slideDuration = 6000;
   let slideStartTime;
   let progressRAF;
   let isTransitioning = false;
@@ -874,6 +935,7 @@ if (slideshow) {
     setTimeout(() => {
       slideshow.classList.remove('slideshow-glitching', 'flash');
       isTransitioning = false;
+      scheduleNextSlide();
     }, 800);
   }
 
@@ -897,6 +959,7 @@ if (slideshow) {
     setTimeout(() => {
       fxOverlay.classList.remove('active', 'horizontal');
       isTransitioning = false;
+      scheduleNextSlide();
     }, 900);
   }
 
@@ -920,6 +983,7 @@ if (slideshow) {
         next.style.zIndex = '';
         next.style.clipPath = '';
         isTransitioning = false;
+        scheduleNextSlide();
       }
     });
 
@@ -943,6 +1007,7 @@ if (slideshow) {
       cleanupSlide(prev);
       next.classList.remove('zoom-enter');
       isTransitioning = false;
+      scheduleNextSlide();
     }, 1000);
   }
 
@@ -958,6 +1023,7 @@ if (slideshow) {
       cleanupSlide(prev);
       next.classList.remove('rgb-enter');
       isTransitioning = false;
+      scheduleNextSlide();
     }, 1000);
   }
 
@@ -976,12 +1042,19 @@ if (slideshow) {
       cleanupSlide(prev);
       next.classList.remove('shutter-enter');
       isTransitioning = false;
+      scheduleNextSlide();
     }, 1000);
   }
 
   function nextSlide() {
     const next = (currentSlide + 1) % slides.length;
     goToSlide(next);
+  }
+
+  // Schedule next slide only after transition finishes
+  function scheduleNextSlide() {
+    resetProgress();
+    slideTimeout = setTimeout(nextSlide, slideDuration);
   }
 
   function resetProgress() {
@@ -1003,25 +1076,23 @@ if (slideshow) {
   dots.forEach((dot, i) => {
     dot.addEventListener('click', () => {
       if (i === currentSlide || isTransitioning) return;
-      clearInterval(slideInterval);
+      clearTimeout(slideTimeout);
       goToSlide(i);
-      slideInterval = setInterval(nextSlide, slideDuration);
     });
   });
 
   // Start slideshow
   resetProgress();
-  slideInterval = setInterval(nextSlide, slideDuration);
+  slideTimeout = setTimeout(nextSlide, slideDuration);
 
   // Pause on hover
   slideshow.addEventListener('mouseenter', () => {
-    clearInterval(slideInterval);
+    clearTimeout(slideTimeout);
     if (progressRAF) cancelAnimationFrame(progressRAF);
   });
 
   slideshow.addEventListener('mouseleave', () => {
-    resetProgress();
-    slideInterval = setInterval(nextSlide, slideDuration);
+    scheduleNextSlide();
   });
 }
 
