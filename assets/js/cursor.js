@@ -37,30 +37,30 @@ document.addEventListener('DOMContentLoaded', function () {
   var isHovering = false;
   var hoverTarget = null;
 
-  // ── Trail System — physics-damped following points ──
-  var TRAIL_COUNT = 8;
+  // ── Trail System — reduced from 8 to 5 for performance ──
+  var TRAIL_COUNT = 5;
   var trail = [];
   for (var i = 0; i < TRAIL_COUNT; i++) {
     trail.push({
       x: cursor.x, y: cursor.y,
       vx: 0, vy: 0,
-      size: Math.max(1.5, 5 - i * 0.45),
-      opacity: Math.max(0.03, 0.22 - i * 0.025),
-      spring: Math.max(0.015, 0.1 - i * 0.01),
-      damping: 0.7 + i * 0.025,
+      size: Math.max(1.5, 4 - i * 0.5),
+      opacity: Math.max(0.03, 0.18 - i * 0.03),
+      spring: Math.max(0.02, 0.1 - i * 0.015),
+      damping: 0.72 + i * 0.03,
     });
   }
 
-  // ── Sparkles ──
-  var SPARKLE_COUNT = 6;
+  // ── Sparkles — reduced from 6 to 3 ──
+  var SPARKLE_COUNT = 3;
   var sparkles = [];
   for (var s = 0; s < SPARKLE_COUNT; s++) {
     sparkles.push({
       angle: (Math.PI * 2 / SPARKLE_COUNT) * s,
-      speed: 0.008 + Math.random() * 0.012,
+      speed: 0.01 + Math.random() * 0.01,
       distance: 0, targetDistance: 0,
-      size: 1 + Math.random() * 1.5,
-      hueOffset: s * 40, opacity: 0,
+      size: 1.2 + Math.random() * 1,
+      hueOffset: s * 60, opacity: 0,
     });
   }
 
@@ -206,14 +206,11 @@ document.addEventListener('DOMContentLoaded', function () {
     ctx.translate(cursor.x, cursor.y);
     ctx.rotate(angle);
 
-    var glowR = r * 2.5;
-    var glow = ctx.createRadialGradient(0, 0, r * 0.5, 0, 0, glowR);
-    glow.addColorStop(0, 'hsla(' + hue + ', 80%, 60%, ' + (0.06 + clickFlash * 0.15) + ')');
-    glow.addColorStop(0.5, 'hsla(' + ((hue + 40) % 360) + ', 70%, 50%, ' + (0.02 + clickFlash * 0.06) + ')');
-    glow.addColorStop(1, 'hsla(0, 0%, 0%, 0)');
+    // Simplified glow — single color stop instead of 3
+    var glowR = r * 2;
     ctx.beginPath();
     ctx.arc(0, 0, glowR, 0, Math.PI * 2);
-    ctx.fillStyle = glow;
+    ctx.fillStyle = 'hsla(' + hue + ', 75%, 60%, ' + (0.04 + clickFlash * 0.1) + ')';
     ctx.fill();
 
     // ── Velocity-based distortion ──

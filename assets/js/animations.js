@@ -16,52 +16,78 @@ document.addEventListener('DOMContentLoaded', function () {
   var loaderBar = qs('#loaderBar');
   var loaderCounter = qs('#loaderCounter');
   var loaderBlinds = qs('#loaderBlinds');
+  var loaderDismissed = false;
 
-  if (loader && loaderBar && loaderCounter && loaderBlinds) {
-    var counterObj = { val: 0 };
-    var loaderTl = gsap.timeline();
-
-    loaderTl.to(counterObj, {
-      val: 100,
-      duration: 2.2,
-      ease: 'power2.inOut',
-      onUpdate: function () {
-        var v = Math.round(counterObj.val);
-        loaderCounter.textContent = v;
-        loaderBar.style.width = v + '%';
-      },
-      onComplete: function () {
-        var blinds = loaderBlinds.querySelectorAll('.loader-blind');
-        gsap.to(blinds, {
-          scaleY: 0,
-          duration: 0.6,
-          stagger: { each: 0.05, from: 'center' },
-          ease: 'power3.inOut',
-        });
-
-        gsap.to('.loader-center', {
-          scale: 1.2,
-          opacity: 0,
-          filter: 'blur(10px)',
-          duration: 0.5,
-          ease: 'power3.in'
-        });
-
-        gsap.to(loader, {
-          opacity: 0,
-          duration: 0.6,
-          delay: 0.5,
-          ease: 'power2.inOut',
-          onComplete: function () {
-            loader.classList.add('hidden');
-            initAnimations();
-          }
-        });
-      }
-    });
-  } else {
-    // No loader found — initialise animations immediately
+  // Failsafe: dismiss loader after max 3 s no matter what (GSAP CDN fail, etc.)
+  function dismissLoader() {
+    if (loaderDismissed) return;
+    loaderDismissed = true;
+    if (loader) {
+      loader.style.transition = 'opacity 0.4s ease';
+      loader.style.opacity = '0';
+      setTimeout(function () {
+        loader.classList.add('hidden');
+      }, 400);
+    }
     initAnimations();
+  }
+
+  var loaderFailsafe = setTimeout(dismissLoader, 3000);
+
+  if (loader && loaderBar && loaderCounter && loaderBlinds && typeof gsap !== 'undefined') {
+    try {
+      var counterObj = { val: 0 };
+      var loaderTl = gsap.timeline();
+
+      loaderTl.to(counterObj, {
+        val: 100,
+        duration: 0.5,
+        ease: 'power2.inOut',
+        onUpdate: function () {
+          var v = Math.round(counterObj.val);
+          loaderCounter.textContent = v;
+          loaderBar.style.width = v + '%';
+        },
+        onComplete: function () {
+          var blinds = loaderBlinds.querySelectorAll('.loader-blind');
+          gsap.to(blinds, {
+            scaleY: 0,
+            duration: 0.3,
+            stagger: { each: 0.015, from: 'center' },
+            ease: 'power3.inOut',
+          });
+
+          gsap.to('.loader-center', {
+            scale: 1.05,
+            opacity: 0,
+            duration: 0.2,
+            ease: 'power3.in'
+          });
+
+          gsap.to(loader, {
+            opacity: 0,
+            duration: 0.3,
+            delay: 0.2,
+            ease: 'power2.inOut',
+            onComplete: function () {
+              clearTimeout(loaderFailsafe);
+              if (loaderDismissed) return;
+              loaderDismissed = true;
+              loader.classList.add('hidden');
+              initAnimations();
+            }
+          });
+        }
+      });
+    } catch (e) {
+      // GSAP failed — dismiss immediately
+      clearTimeout(loaderFailsafe);
+      dismissLoader();
+    }
+  } else {
+    // No loader or no GSAP — dismiss immediately
+    clearTimeout(loaderFailsafe);
+    dismissLoader();
   }
 
   // ==================== MAGNETIC BUTTONS ====================
@@ -81,119 +107,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // ==================== PARTICLE CANVAS ====================
-  var heroCanvas = qs('#heroCanvas');
-  var heroCtx = heroCanvas ? heroCanvas.getContext('2d') : null;
-  var particles = [];
-  var particleAnimationId = null;
-
-  function resizeParticleCanvas() {
-    if (!heroCanvas) return;
-    heroCanvas.width = window.innerWidth;
-    heroCanvas.height = window.innerHeight;
-  }
-
-  if (heroCanvas) {
-    resizeParticleCanvas();
-    window.addEventListener('resize', resizeParticleCanvas);
-  }
-
-  function Particle() { this.reset(); }
-  Particle.prototype.reset = function () {
-    if (!heroCanvas) return;
-    this.x = Math.random() * heroCanvas.width;
-    this.y = Math.random() * heroCanvas.height;
-    this.size = Math.random() * 2 + 0.5;
-    this.speedX = (Math.random() - 0.5) * 0.5;
-    this.speedY = (Math.random() - 0.5) * 0.5;
-    this.opacity = Math.random() * 0.5 + 0.1;
-    this.color = this.getRandomColor();
-  };
-  Particle.prototype.getRandomColor = function () {
-    var colors = ['124, 58, 237', '6, 182, 212', '244, 63, 94', '236, 72, 153', '245, 158, 11', '16, 185, 129'];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
-  Particle.prototype.update = function () {
-    if (!heroCanvas) return;
-    this.x += this.speedX;
-    this.y += this.speedY;
-    var dx = mouseX - this.x;
-    var dy = mouseY - this.y;
-    var dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist < 150) {
-      var force = (150 - dist) / 150;
-      this.x -= dx * force * 0.01;
-      this.y -= dy * force * 0.01;
-    }
-    if (this.x < 0) this.x = heroCanvas.width;
-    if (this.x > heroCanvas.width) this.x = 0;
-    if (this.y < 0) this.y = heroCanvas.height;
-    if (this.y > heroCanvas.height) this.y = 0;
-  };
-  Particle.prototype.draw = function () {
-    if (!heroCtx) return;
-    heroCtx.beginPath();
-    heroCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    heroCtx.fillStyle = 'rgba(' + this.color + ', ' + this.opacity + ')';
-    heroCtx.fill();
-  };
-
-  function initParticles() {
-    if (!heroCanvas) return;
-    var count = isMobile
-      ? Math.min(30, Math.floor(window.innerWidth * 0.05))
-      : Math.min(150, Math.floor(window.innerWidth * 0.1));
-    particles = [];
-    for (var i = 0; i < count; i++) particles.push(new Particle());
-  }
-
-  function drawConnections() {
-    if (isMobile || !heroCtx) return;
-    for (var i = 0; i < particles.length; i++) {
-      for (var j = i + 1; j < particles.length; j++) {
-        var dx = particles[i].x - particles[j].x;
-        var dy = particles[i].y - particles[j].y;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 120) {
-          heroCtx.beginPath();
-          heroCtx.moveTo(particles[i].x, particles[i].y);
-          heroCtx.lineTo(particles[j].x, particles[j].y);
-          heroCtx.strokeStyle = 'rgba(124, 58, 237, ' + (0.08 * (1 - dist / 120)) + ')';
-          heroCtx.lineWidth = 0.5;
-          heroCtx.stroke();
-        }
-      }
-    }
-  }
-
-  function animateParticles() {
-    if (!heroCtx || !heroCanvas) return;
-    heroCtx.clearRect(0, 0, heroCanvas.width, heroCanvas.height);
-    particles.forEach(function (p) { p.update(); p.draw(); });
-    drawConnections();
-    particleAnimationId = requestAnimationFrame(animateParticles);
-  }
-
-  if (heroCanvas) {
-    initParticles();
-    animateParticles();
-  }
-
-  // ── Pause particles when hero is offscreen ──
-  var heroSection = qs('#hero');
-  if (heroSection) {
-    var heroObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          if (!particleAnimationId) animateParticles();
-        } else {
-          cancelAnimationFrame(particleAnimationId);
-          particleAnimationId = null;
-        }
-      });
-    }, { threshold: 0 });
-    heroObserver.observe(heroSection);
-  }
+  // ==================== PARTICLE CANVAS — REMOVED ====================
+  // The old O(n²) particle + connections system was the #1 performance killer.
+  // Replaced with pure CSS orbs + mesh in the hero section — zero JS overhead.
 
   // ==================== GSAP SCROLL ANIMATIONS ====================
   function initAnimations() {
@@ -204,136 +120,81 @@ document.addEventListener('DOMContentLoaded', function () {
       splitTextIntoChars(el);
     });
 
-    // ── CINEMATIC HERO ENTRANCE ──
-    // Register premium easing curves
-    if (typeof CustomEase !== 'undefined') {
-      try {
-        CustomEase.create('cinematic', 'M0,0 C0.23,1 0.32,1 1,1');
-        CustomEase.create('heroReveal', 'M0,0 C0.77,0 0.175,1 1,1');
-      } catch(e) { /* already registered */ }
-    }
+    // ── CINEMATIC HERO ENTRANCE — streamlined for speed ──
+    var heroTl = gsap.timeline({ delay: 0.15 });
 
-    var heroTl = gsap.timeline({ delay: 0.3 });
-
-    // Phase 1: Cinematic reveal line sweeps across the viewport
-    heroTl.fromTo('.hero-reveal-line', {
-      scaleX: 0, opacity: 1,
-    }, {
-      scaleX: 1,
-      duration: 1, ease: 'power4.inOut',
-    });
-
-    // Phase 2: Breathing pause — let the line settle
-    heroTl.to({}, { duration: 0.15 });
-
-    // Phase 3: Ambient mesh fades in
+    // Phase 1: Tag + mesh fade in together
     heroTl.fromTo('.hero-mesh', {
-      opacity: 0, scale: 0.8,
+      opacity: 0, scale: 0.85,
     }, {
       opacity: 1, scale: 1,
-      duration: 1.5, stagger: 0.2, ease: 'power2.out',
-    }, '-=0.1');
+      duration: 0.8, stagger: 0.1, ease: 'power2.out',
+    });
 
-    // Phase 4: Tag appears with blur-to-sharp
     heroTl.fromTo('.hero-tag', {
-      opacity: 0, y: 20, filter: 'blur(10px)',
+      opacity: 0, y: 15,
     }, {
-      opacity: 1, y: 0, filter: 'blur(0px)',
-      duration: 1, ease: 'power4.out',
-    }, '-=1.2');
-
-    // Phase 5: Title lines — staggered mask reveal with blur-to-sharp
-    heroTl.fromTo('.hero-line:nth-child(1) .hero-word', {
-      y: '120%', opacity: 0, filter: 'blur(8px)', rotateX: -20,
-    }, {
-      y: '0%', opacity: 1, filter: 'blur(0px)', rotateX: 0,
-      duration: 1.2, stagger: 0.08, ease: 'power4.out',
+      opacity: 1, y: 0,
+      duration: 0.5, ease: 'power3.out',
     }, '-=0.6');
 
-    heroTl.fromTo('.hero-line:nth-child(2) .hero-word', {
-      y: '120%', opacity: 0, filter: 'blur(8px)', rotateX: -20,
+    // Phase 2: All title lines reveal quickly
+    heroTl.fromTo('.hero-line .hero-word', {
+      y: '100%', opacity: 0,
     }, {
-      y: '0%', opacity: 1, filter: 'blur(0px)', rotateX: 0,
-      duration: 1.2, stagger: 0.08, ease: 'power4.out',
-    }, '-=0.8');
+      y: '0%', opacity: 1,
+      duration: 0.7, stagger: 0.06, ease: 'power4.out',
+    }, '-=0.3');
 
-    heroTl.fromTo('.hero-line:nth-child(3) .hero-word', {
-      y: '120%', opacity: 0, filter: 'blur(8px)', rotateX: -20,
-    }, {
-      y: '0%', opacity: 1, filter: 'blur(0px)', rotateX: 0,
-      duration: 1.2, stagger: 0.08, ease: 'power4.out',
-    }, '-=0.8');
-
-    // Phase 6: Name character cascade — dramatic 3D reveal
+    // Phase 3: Name characters cascade
     var heroChars = qsa('.hero-name .char');
     if (heroChars.length) {
       heroTl.fromTo(heroChars, {
-        opacity: 0, y: 80, rotateX: -90, scale: 0.3,
-        filter: 'blur(12px)',
+        opacity: 0, y: 40, scale: 0.5,
       }, {
-        opacity: 1, y: 0, rotateX: 0, scale: 1,
-        filter: 'blur(0px)',
-        duration: 1,
-        stagger: { each: 0.04, from: 'start' },
-        ease: 'back.out(1.7)',
-      }, '-=1.2');
+        opacity: 1, y: 0, scale: 1,
+        duration: 0.6,
+        stagger: { each: 0.03, from: 'start' },
+        ease: 'back.out(1.5)',
+      }, '-=0.5');
     }
 
-    // Phase 7: Breathing pause — moment of stillness
-    heroTl.to({}, { duration: 0.25 });
-
-    // Phase 8: Subtitle — gentle blur-to-sharp
+    // Phase 4: Subtitle + CTAs together
     heroTl.fromTo('.hero-subtitle', {
-      opacity: 0, y: 30, filter: 'blur(6px)',
+      opacity: 0, y: 20,
     }, {
-      opacity: 1, y: 0, filter: 'blur(0px)',
-      duration: 0.9, ease: 'power3.out',
-    });
+      opacity: 1, y: 0,
+      duration: 0.5, ease: 'power3.out',
+    }, '-=0.2');
 
-    // Phase 9: CTA buttons — staggered entrance
     heroTl.set('.hero-actions', { opacity: 1, y: 0 });
-
-    heroTl.fromTo('.hero-actions .btn-primary', {
-      opacity: 0, y: 25, scale: 0.9,
+    heroTl.fromTo('.hero-actions a', {
+      opacity: 0, y: 20, scale: 0.95,
     }, {
       opacity: 1, y: 0, scale: 1,
-      duration: 0.7, ease: 'back.out(1.7)',
+      duration: 0.4, stagger: 0.08, ease: 'power3.out',
     }, '-=0.3');
 
-    heroTl.fromTo('.hero-actions .btn-outline', {
-      opacity: 0, y: 25, scale: 0.9,
-    }, {
-      opacity: 1, y: 0, scale: 1,
-      duration: 0.7, ease: 'back.out(1.7)',
-    }, '-=0.5');
-
-    // Phase 10: Ambient grid lines rise from top
+    // Phase 5: Grid lines + scroll cue — ambient finishers
     heroTl.fromTo('.grid-line', {
       scaleY: 0, transformOrigin: 'top center',
     }, {
-      scaleY: 1, duration: 1.5,
-      stagger: 0.1, ease: 'power3.out',
-    }, '-=1.2');
+      scaleY: 1, duration: 0.8,
+      stagger: 0.06, ease: 'power2.out',
+    }, '-=0.4');
 
-    // Phase 11: Scroll cue fades in
     heroTl.fromTo('.hero-scroll-cue', {
-      opacity: 0, y: 15,
+      opacity: 0, y: 10,
     }, {
-      opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
-    }, '-=0.5');
+      opacity: 1, y: 0, duration: 0.5, ease: 'power2.out',
+    }, '-=0.3');
 
-    // Phase 12: Reveal line dissolves gracefully
-    heroTl.to('.hero-reveal-line', {
-      opacity: 0, scaleY: 0,
-      duration: 0.6, ease: 'power2.out',
-    }, '-=0.8');
-
-    // ── HERO PARALLAX ON SCROLL — depth layers at different speeds ──
+    // ── HERO PARALLAX ON SCROLL — lightweight ──
     var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!prefersReduced) {
-      // Content fades, scales, and blurs as user scrolls down
+      // Content fades as user scrolls down
       gsap.to('.hero-content', {
-        y: -120, opacity: 0, scale: 0.95, filter: 'blur(10px)',
+        y: -80, opacity: 0,
         ease: 'none',
         scrollTrigger: {
           trigger: '#hero',
@@ -343,44 +204,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       });
 
-      // Orbs at different parallax depths
+      // Orbs parallax (CSS-only orbs, just shift via GSAP scrub)
       gsap.to('.orb-1', {
-        y: -180, x: 40,
+        y: -100,
         ease: 'none',
         scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 2 }
       });
 
       gsap.to('.orb-2', {
-        y: -120, x: -30,
+        y: -70,
         ease: 'none',
         scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 2.5 }
       });
 
-      gsap.to('.orb-3', {
-        y: -200,
-        ease: 'none',
-        scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 3 }
-      });
-
-      // Floating shapes parallax
-      gsap.to('.floating-shapes', {
-        y: -150,
-        ease: 'none',
-        scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 2 }
-      });
-
       // Grid lines fade on scroll
       gsap.to('.hero-grid-lines', {
-        y: -80, opacity: 0,
+        y: -50, opacity: 0,
         ease: 'none',
         scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom 70%', scrub: 1 }
-      });
-
-      // Ambient mesh deeper parallax
-      gsap.to('.hero-ambient', {
-        y: -100,
-        ease: 'none',
-        scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 3 }
       });
     }
 
@@ -598,30 +439,18 @@ document.addEventListener('DOMContentLoaded', function () {
   var lastWordAnim = -1;
 
   var wordAnimations = [
-    { exit: { y: -40, opacity: 0, scale: 1.3, rotateZ: 4, filter: 'blur(8px)', duration: 0.35 },
-      enter: { from: { y: 50, opacity: 0, scale: 0.6, rotateZ: -3, filter: 'blur(8px)' },
-               to: { y: 0, opacity: 1, scale: 1, rotateZ: 0, filter: 'blur(0px)', duration: 0.55 } } },
-    { exit: { rotateX: 90, opacity: 0, y: -20, duration: 0.4 },
-      enter: { from: { rotateX: -90, opacity: 0, y: 20 },
-               to: { rotateX: 0, opacity: 1, y: 0, duration: 0.5 } } },
-    { exit: { y: 80, opacity: 0, scaleY: 0.3, duration: 0.35 },
-      enter: { from: { y: -80, opacity: 0, scaleY: 2.5 },
-               to: { y: 0, opacity: 1, scaleY: 1, duration: 0.5 } } },
-    { exit: { scale: 3, opacity: 0, filter: 'blur(12px)', duration: 0.4 },
-      enter: { from: { scale: 0, opacity: 0, filter: 'blur(12px)' },
-               to: { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.55 } } },
-    { exit: { x: -120, opacity: 0, skewX: -25, scaleX: 0.5, duration: 0.4 },
-      enter: { from: { x: 120, opacity: 0, skewX: 25, scaleX: 0.5 },
-               to: { x: 0, opacity: 1, skewX: 0, scaleX: 1, duration: 0.55 } } },
-    { exit: { opacity: 0, scale: 0.8, rotateY: 90, duration: 0.35 },
-      enter: { from: { opacity: 0, scale: 0.8, rotateY: -90 },
-               to: { opacity: 1, scale: 1, rotateY: 0, duration: 0.55 } } },
-    { exit: { y: -60, x: 30, opacity: 0, rotateZ: 8, scale: 0.7, duration: 0.35 },
-      enter: { from: { y: 60, x: -30, opacity: 0, rotateZ: -8, scale: 0.7 },
-               to: { y: 0, x: 0, opacity: 1, rotateZ: 0, scale: 1, duration: 0.55 } } },
-    { exit: { scaleX: 0, opacity: 0, filter: 'blur(4px)', duration: 0.3 },
-      enter: { from: { scaleX: 0, opacity: 0, filter: 'blur(4px)' },
-               to: { scaleX: 1, opacity: 1, filter: 'blur(0px)', duration: 0.55 } } }
+    { exit: { y: -40, opacity: 0, duration: 0.3 },
+      enter: { from: { y: 40, opacity: 0 },
+               to: { y: 0, opacity: 1, duration: 0.45 } } },
+    { exit: { rotateX: 90, opacity: 0, duration: 0.3 },
+      enter: { from: { rotateX: -90, opacity: 0 },
+               to: { rotateX: 0, opacity: 1, duration: 0.45 } } },
+    { exit: { scale: 2, opacity: 0, duration: 0.3 },
+      enter: { from: { scale: 0, opacity: 0 },
+               to: { scale: 1, opacity: 1, duration: 0.45 } } },
+    { exit: { x: -80, opacity: 0, skewX: -15, duration: 0.3 },
+      enter: { from: { x: 80, opacity: 0, skewX: 15 },
+               to: { x: 0, opacity: 1, skewX: 0, duration: 0.45 } } }
   ];
 
   function getRandomWordAnim() {
@@ -688,24 +517,26 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // ==================== TILT EFFECT ON CARDS — 3D + LIGHTING SIMULATION ====================
+  // ==================== TILT EFFECT ON CARDS — rAF-throttled ====================
   if (!isTouchDevice) {
     qsa('.project-card, .skill-category, .testimonial-card, .stat-card').forEach(function (card) {
+      var tiltRaf = null;
       card.addEventListener('mousemove', function (e) {
-        var rect = card.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-        var centerX = rect.width / 2;
-        var centerY = rect.height / 2;
-        var rotateX = (y - centerY) / 15;
-        var rotateY = (centerX - x) / 15;
+        if (tiltRaf) return;
+        tiltRaf = requestAnimationFrame(function () {
+          var rect = card.getBoundingClientRect();
+          var x = e.clientX - rect.left;
+          var y = e.clientY - rect.top;
+          var centerX = rect.width / 2;
+          var centerY = rect.height / 2;
+          var rotX = (y - centerY) / 20;
+          var rotY = (centerX - x) / 20;
 
-        // 3D tilt with enhanced scale
-        card.style.transform = 'perspective(1000px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateY(-10px) scale(1.02)';
-
-        // Lighting simulation via CSS custom properties
-        card.style.setProperty('--mouse-x', x + 'px');
-        card.style.setProperty('--mouse-y', y + 'px');
+          card.style.transform = 'perspective(1000px) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg) translateY(-8px) scale(1.01)';
+          card.style.setProperty('--mouse-x', x + 'px');
+          card.style.setProperty('--mouse-y', y + 'px');
+          tiltRaf = null;
+        });
       });
       card.addEventListener('mouseleave', function () {
         card.style.transform = '';
@@ -715,35 +546,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // ==================== PARALLAX FLOATING SHAPES ====================
-  if (!isTouchDevice) {
-    window.addEventListener('mousemove', function (e) {
-      var shapes = qsa('.shape');
-      var x = e.clientX / window.innerWidth;
-      var y = e.clientY / window.innerHeight;
-      shapes.forEach(function (shape, i) {
-        var speed = (i + 1) * 15;
-        shape.style.setProperty('--mx', ((x - 0.5) * speed) + 'px');
-        shape.style.setProperty('--my', ((y - 0.5) * speed) + 'px');
-      });
-    });
-  }
+  // ==================== PARALLAX FLOATING SHAPES — REMOVED ====================
+  // Was running style updates on every mousemove — replaced with pure CSS animation.
 
-  // ==================== ORB MOUSE FOLLOW ====================
-  if (!isTouchDevice) {
-    document.addEventListener('mousemove', function (e) {
-      var orbs = qsa('.orb');
-      var x = e.clientX / window.innerWidth;
-      var y = e.clientY / window.innerHeight;
-      orbs.forEach(function (orb, i) {
-        gsap.to(orb, {
-          x: (x - 0.5) * (i + 1) * 20,
-          y: (y - 0.5) * (i + 1) * 20,
-          duration: 2, ease: 'power2.out'
-        });
-      });
-    });
-  }
+  // ==================== ORB MOUSE FOLLOW — REMOVED ====================
+  // Was firing gsap.to() on every mousemove for 3 orbs — very expensive.
+  // Orbs now drift via lightweight CSS @keyframes animation only.
 
   // ==================== SMOOTH REVEAL OBSERVER ====================
   var observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
@@ -757,10 +565,12 @@ document.addEventListener('DOMContentLoaded', function () {
   }, observerOptions);
 
   // ==================== RESIZE HANDLER ====================
+  var resizeTimeout;
   window.addEventListener('resize', function () {
-    resizeParticleCanvas();
-    initParticles();
-    if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function () {
+      if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+    }, 200);
   });
 
   console.log('🎨 ERROR 404 Portfolio — Loaded');
