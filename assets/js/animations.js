@@ -462,6 +462,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function rotateWordsFn() {
     if (!rotatingWords.length) return;
+
+    // Kill any in-progress word tweens to prevent overlap
+    rotatingWords.forEach(function (w) { gsap.killTweensOf(w); });
+
     var current = rotatingWords[currentWordIndex];
     currentWordIndex = (currentWordIndex + 1) % rotatingWords.length;
     var next = rotatingWords[currentWordIndex];
@@ -483,7 +487,43 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   if (rotatingWords.length) {
-    setInterval(rotateWordsFn, 2500);
+    var wordInterval = null;
+
+    function startWordRotation() {
+      if (wordInterval) return;
+      wordInterval = setInterval(rotateWordsFn, 2500);
+    }
+
+    function stopWordRotation() {
+      if (wordInterval) {
+        clearInterval(wordInterval);
+        wordInterval = null;
+      }
+    }
+
+    // Reset words to a clean state when tab becomes visible again
+    function resetWords() {
+      rotatingWords.forEach(function (w) {
+        gsap.killTweensOf(w);
+        w.classList.remove('active');
+        w.style.cssText = '';
+      });
+      // Activate the current word cleanly
+      rotatingWords[currentWordIndex].classList.add('active');
+      rotatingWords[currentWordIndex].style.opacity = '1';
+      rotatingWords[currentWordIndex].style.transform = 'translateY(0) rotateX(0deg)';
+    }
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        stopWordRotation();
+      } else {
+        resetWords();
+        startWordRotation();
+      }
+    });
+
+    startWordRotation();
   }
 
   // ==================== PROJECT FILTER ====================
