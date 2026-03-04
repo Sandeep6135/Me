@@ -56,3 +56,28 @@ function animateButtonSuccess(btn) {
     gsap.fromTo(btn, { scale: 1.05 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' });
   }
 }
+
+// ── Image Download Protection ──
+// Disable right-click on all protected images
+document.addEventListener('contextmenu', function (e) {
+  if (e.target.classList && e.target.classList.contains('protected-img')) {
+    e.preventDefault();
+    return false;
+  }
+});
+
+// Disable drag on all protected images
+document.addEventListener('dragstart', function (e) {
+  if (e.target.classList && e.target.classList.contains('protected-img')) {
+    e.preventDefault();
+    return false;
+  }
+});
+
+// Block common keyboard shortcuts for saving images (Ctrl+S, Ctrl+Shift+I)
+document.addEventListener('keydown', function (e) {
+  // Ctrl+S (Save page)
+  if (e.ctrlKey && e.key === 's') {
+    e.preventDefault();
+  }
+});

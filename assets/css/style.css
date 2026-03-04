@@ -1170,6 +1170,27 @@ input, textarea {
   will-change: opacity, transform, clip-path, filter;
 }
 
+/* ---- Image Download Protection ---- */
+.protected-img {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  pointer-events: none;
+}
+
+.img-protect-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: transparent;
+  cursor: default;
+}
+
 .slide-img.active {
   opacity: 1;
   z-index: 3;
